@@ -48,18 +48,22 @@ PrismDeck reads (never writes):
 Wrapper-specific state (selected install, theme, wrapper command) lives in
 PrismDeck's own app config directory.
 
-## Threading model (planned)
+## Threading model
 
 - Tauri commands are `async` where they touch the filesystem or spawn.
 - Blocking work runs on `tauri::async_runtime::spawn_blocking`.
-- Each launch gets a run ID, a bounded log ring buffer, and reader tasks for
-  stdout/stderr.
-- Log lines are batched (≈20–50 lines or 100 ms) before being emitted to the
+- Each launch gets a run ID, a bounded log ring buffer (2000 lines), and
+  reader threads for stdout/stderr.
+- Log lines are batched (40 lines or 60 ms) before being emitted to the
   webview. This avoids flooding WebKit with thousands of IPC events.
-- Themes are watched by a `notify` debouncer (100 ms) and pushed to the
-  frontend as a single CSS payload.
+- On Linux each launch starts a new session (`setsid`) so the whole process
+  tree can be signalled with `kill(-pid, …)`. Windows uses `taskkill /T`.
+- Themes will be watched by a `notify` debouncer (100 ms) and pushed to the
+  frontend as a single CSS payload (M5).
 
-## M0 scope
+## Current scope
 
-The current commit is a working Tauri v2 + vanilla JS shell with one native
-command (`app_info`). Discovery, parsing and launch arrive in M1–M3.
+M0–M4 are implemented: Tauri shell, Linux/Windows discovery, instance
+parsing, the launch engine with wrapper support and a live console, and the
+deck UI. Remaining: themes (M5), settings (M6), packaging (M7) and release
+(M8).

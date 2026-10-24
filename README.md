@@ -13,15 +13,20 @@ Prism.
 
 ## Status
 
-Early development. Current milestone: **M0 — foundation**.
+Early development. Current milestone: **M4 — UI shell**.
 
 - [x] Tauri v2 + vanilla frontend scaffold
-- [ ] Prism discovery (native / Flatpak / portable / custom)
-- [ ] `instance.cfg` + `mmc-pack.json` + groups parsing
-- [ ] launch engine with Gamescope / GameMode wrappers
-- [ ] live stdout/stderr console
+- [x] Prism discovery (native / Flatpak / portable / custom / data-only)
+- [x] `instance.cfg` + `mmc-pack.json` + groups parsing + icons
+- [x] launch engine with Gamescope / GameMode wrappers
+- [x] live stdout/stderr console with stop / force-stop
+- [x] instance deck UI (search, group filters, detail modal, onboarding)
 - [ ] one-file CSS themes + hot reload
+- [ ] settings persistence (selected install, wrapper command)
 - [ ] Linux AppImage/deb + Windows MSI release
+
+No Prism installed? The app shows onboarding and can load the bundled
+`fixtures/` demo deck (`PRISMDECK_DEMO=1` auto-loads it in development).
 
 ## Requirements
 

@@ -9,6 +9,8 @@ adds a fast, themeable deck UI on top. Everything that needs the full Prism
 GUI (accounts, modpack installers, Java management) is delegated back to
 Prism.
 
+![PrismDeck M0 shell](docs/assets/m0-shell.png)
+
 ## Status
 
 Early development. Current milestone: **M0 — foundation**.

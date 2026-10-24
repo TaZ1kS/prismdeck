@@ -22,57 +22,284 @@
             <span>Prism Launcher shell</span>
           </div>
         </div>
+
+        <label class="search" for="search-input">
+          <span class="search__glyph" aria-hidden="true">⌕</span>
+          <input
+            id="search-input"
+            class="search__input"
+            type="search"
+            placeholder="Search instances, versions, packs…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <kbd class="search__kbd" aria-hidden="true">/</kbd>
+        </label>
+
         <div class="topbar__spacer"></div>
         <div class="topbar__meta" id="env-meta">booting…</div>
       </header>
 
       <aside data-region="sidebar" class="sidebar">
         <nav class="nav" aria-label="Primary">
-          <button class="nav__item is-active" type="button" data-nav="instances">Instances</button>
-          <button class="nav__item" type="button" data-nav="themes">Themes</button>
-          <button class="nav__item" type="button" data-nav="settings">Settings</button>
+          <button class="nav__item is-active" type="button" data-nav="instances">
+            Instances
+          </button>
+          <button class="nav__item" type="button" data-nav="themes" disabled>
+            Themes <span class="nav__tag">M5</span>
+          </button>
+          <button class="nav__item" type="button" data-nav="settings" disabled>
+            Settings <span class="nav__tag">M6</span>
+          </button>
         </nav>
-        <div class="sidebar__note">
-          <span class="eyebrow">status</span>
-          <p id="bootstrap-note">Scaffold online. Prism discovery lands in M1.</p>
+
+        <div class="sidebar__groups">
+          <span class="eyebrow">groups</span>
+          <div id="group-list" class="group-list" aria-label="Instance groups"></div>
+        </div>
+
+        <div class="source-card">
+          <span class="eyebrow">prism source</span>
+          <select id="source-select" class="select" aria-label="Prism installation">
+            <option value="">No source detected</option>
+          </select>
+          <div class="source-card__actions">
+            <button id="refresh-btn" class="btn btn--ghost btn--small" type="button">
+              Refresh
+            </button>
+            <button id="detect-btn" class="btn btn--ghost btn--small" type="button">
+              Detect
+            </button>
+          </div>
+          <p id="source-note" class="source-card__note">Waiting for a scan…</p>
         </div>
       </aside>
 
       <main data-region="content" class="content">
         <div class="content__inner">
-          <section class="hero">
-            <span class="eyebrow">M0 · foundation</span>
-            <h1>One shell.<br />Every instance.</h1>
+          <section id="loading" class="panel loading" aria-live="polite">
+            <span class="eyebrow">scanning</span>
+            <h1>Finding Prism…</h1>
             <p class="hero__copy">
-              A featherweight deck for Prism Launcher — Rust core, vanilla webview,
-              themeable to the bones.
+              Reading installation candidates, instance configs and icons.
             </p>
-            <div class="hero__actions">
-              <button class="btn btn--primary" id="probe-btn" type="button">
-                Run environment probe
-              </button>
-              <span class="hint">calls <code>app_info</code> in Rust</span>
+            <div class="loading__bar"><span></span></div>
+          </section>
+
+          <section id="onboarding" class="panel onboarding" hidden>
+            <div class="onboarding__body">
+              <span class="eyebrow">setup</span>
+              <h1>Prism not found.</h1>
+              <p class="hero__copy">
+                PrismDeck is a shell: it reads an existing Prism Launcher
+                installation. No installation was detected on this machine yet.
+                Install Prism, point it at a portable folder, or explore the
+                bundled demo deck.
+              </p>
+              <div class="onboarding__actions">
+                <button id="retry-detect" class="btn btn--primary" type="button">
+                  Detect again
+                </button>
+                <button id="demo-btn" class="btn btn--ghost" type="button" hidden>
+                  Explore demo deck
+                </button>
+              </div>
+            </div>
+
+            <div id="detected-list" class="detected-list"></div>
+
+            <div class="onboarding__hint">
+              <span class="eyebrow">expected locations</span>
+              <ul class="path-list">
+                <li>
+                  <code>~/.local/share/PrismLauncher</code>
+                  <span>Linux native</span>
+                </li>
+                <li>
+                  <code>~/.var/app/org.prismlauncher.PrismLauncher/data/PrismLauncher</code>
+                  <span>Flatpak</span>
+                </li>
+                <li>
+                  <code>%APPDATA%\PrismLauncher</code>
+                  <span>Windows</span>
+                </li>
+                <li>
+                  <code>UserData/</code>
+                  <span>Portable, next to prismlauncher</span>
+                </li>
+              </ul>
             </div>
           </section>
 
-          <section class="panel">
-            <div class="panel__head">
-              <h2>Runtime</h2>
-              <span class="chip" id="probe-state" aria-live="polite">idle</span>
+          <section id="error-panel" class="panel error-panel" hidden>
+            <span class="eyebrow">error</span>
+            <h1>Couldn't open the deck.</h1>
+            <p id="error-message" class="hero__copy"></p>
+            <div class="onboarding__actions">
+              <button id="error-retry" class="btn btn--primary" type="button">
+                Try again
+              </button>
+              <button id="error-demo" class="btn btn--ghost" type="button" hidden>
+                Use demo data
+              </button>
             </div>
-            <pre class="code" id="probe-output">Waiting for probe…</pre>
+          </section>
+
+          <section id="dashboard" hidden>
+            <section class="deck-head">
+              <div class="deck-head__copy">
+                <span class="eyebrow">instance deck</span>
+                <h1 id="deck-title">Your deck.</h1>
+                <p id="deck-subtitle" class="hero__copy">No source loaded.</p>
+              </div>
+              <div class="deck-stats">
+                <div class="stat">
+                  <strong id="stat-instances">0</strong>
+                  <span>instances</span>
+                </div>
+                <div class="stat">
+                  <strong id="stat-groups">0</strong>
+                  <span>groups</span>
+                </div>
+                <div class="stat">
+                  <strong id="stat-last">—</strong>
+                  <span>last played</span>
+                </div>
+              </div>
+            </section>
+
+            <div id="warnings" class="warnings" hidden></div>
+
+            <div class="deck-toolbar">
+              <span id="result-count" class="deck-toolbar__count">0 instances</span>
+              <div class="deck-toolbar__right">
+                <span id="active-filter" class="chip chip--plain" hidden></span>
+                <button id="clear-filter" class="btn btn--ghost btn--small" type="button" hidden>
+                  Clear filter
+                </button>
+              </div>
+            </div>
+
+            <div id="instance-grid" class="instance-grid" aria-live="polite"></div>
+
+            <div id="empty-deck" class="empty" hidden>
+              <strong>No instances match.</strong>
+              <p>Try a different search, or clear the active group filter.</p>
+              <button id="empty-clear" class="btn btn--ghost btn--small" type="button">
+                Clear filters
+              </button>
+            </div>
           </section>
         </div>
       </main>
 
       <footer data-region="statusbar" class="statusbar">
-        <span>PrismDeck 0.1.0</span>
+        <span id="status-version">PrismDeck 0.1.0</span>
         <span class="statusbar__dot" aria-hidden="true"></span>
-        <span>zero npm runtime</span>
+        <span id="status-install">no source</span>
         <span class="statusbar__spacer"></span>
+        <span id="status-count">0 instances</span>
         <span id="theme-label">theme: default</span>
       </footer>
     </div>
+
+    <div id="instance-modal" class="modal" hidden>
+      <div class="modal__backdrop" data-close-modal></div>
+      <section
+        class="modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <button class="modal__close" type="button" data-close-modal aria-label="Close">
+          ×
+        </button>
+        <div class="modal__hero">
+          <div id="modal-icon" class="instance-icon instance-icon--large">
+            <span class="instance-icon__initials">··</span>
+          </div>
+          <div class="modal__heading">
+            <span class="eyebrow" id="modal-eyebrow">instance</span>
+            <h2 id="modal-title">Instance</h2>
+            <p id="modal-subtitle" class="modal__subtitle"></p>
+          </div>
+        </div>
+        <div id="modal-details" class="detail-grid"></div>
+        <div id="modal-notes" class="modal__notes" hidden>
+          <span class="eyebrow">notes</span>
+          <p id="modal-notes-text"></p>
+        </div>
+        <details class="launch-options">
+          <summary>Launch options</summary>
+          <div class="launch-options__body">
+            <label class="field">
+              <span class="field__label">Wrapper command</span>
+              <input
+                id="modal-wrapper"
+                class="input"
+                type="text"
+                placeholder="gamescope -f --"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <span class="field__hint">Prepend a launcher such as Gamescope or GameMode.</span>
+            </label>
+            <div class="launch-options__row">
+              <label class="check">
+                <input id="modal-offline" type="checkbox" />
+                <span>Offline mode</span>
+              </label>
+              <label class="check">
+                <input id="modal-show-window" type="checkbox" />
+                <span>Show Prism window</span>
+              </label>
+            </div>
+          </div>
+        </details>
+        <div class="modal__actions">
+          <button id="modal-launch" class="btn btn--primary" type="button" disabled>
+            Launch
+          </button>
+          <button id="modal-console" class="btn btn--ghost" type="button" hidden>
+            Open console
+          </button>
+          <span class="hint" id="modal-launch-hint">no executable configured</span>
+        </div>
+      </section>
+    </div>
+
+    <div id="console-modal" class="modal" hidden>
+      <div class="modal__backdrop" data-close-console></div>
+      <section
+        class="modal__panel modal__panel--console"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="console-title"
+      >
+        <button class="modal__close" type="button" data-close-console aria-label="Close">
+          ×
+        </button>
+        <div class="modal__hero">
+          <div class="modal__heading">
+            <span class="eyebrow">launch console</span>
+            <h2 id="console-title">Instance</h2>
+            <p class="modal__subtitle">
+              <span id="console-status" class="chip" data-tone="running">running</span>
+              <span id="console-run-id"></span>
+            </p>
+          </div>
+        </div>
+        <pre id="console-output" class="console" aria-live="polite"></pre>
+        <div class="modal__actions">
+          <button id="console-stop" class="btn btn--danger" type="button">Stop</button>
+          <button id="console-close" class="btn btn--ghost" type="button" data-close-console>
+            Close
+          </button>
+          <span class="hint" id="console-hint">Live output from Prism</span>
+        </div>
+      </section>
+    </div>
+
     <script type="module" src="js/main.js"></script>
   </body>
 </html>

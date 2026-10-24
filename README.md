@@ -23,11 +23,14 @@ Early development. Current milestone: **M7 — packaging**.
 - [x] instance deck UI (search, group filters, detail modal, onboarding)
 - [x] one-file CSS themes + hot reload
 - [x] settings persistence (selected install, theme, wrapper, launch options)
-- [ ] Linux AppImage/deb + Windows MSI release
+- [x] Linux packaging (deb + AppImage)
+- [ ] Windows MSI/NSIS packaging
 
 No Prism installed? The app shows onboarding, a manual folder override, and can
 load the bundled `fixtures/` demo deck (`PRISMDECK_DEMO=1` auto-loads it in
 development).
+
+See `docs/MEMORY.md` for measured memory usage.
 
 ## Requirements
 

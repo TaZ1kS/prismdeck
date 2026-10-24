@@ -68,4 +68,6 @@ M0–M6 are implemented: Tauri shell, Linux/Windows discovery, instance
 parsing, the launch engine with wrapper support and a live console, the deck
 UI, the one-file theme engine with hot reload, and settings persistence
 (selected install, theme, wrapper and launch options in
-`<config>/settings.json`). Remaining: packaging (M7) and release (M8).
+`<config>/settings.json`). Linux packaging (deb + AppImage) is done; Windows
+packaging (M7) and release/tagging (M8) remain. See `docs/MEMORY.md` for
+measured memory usage.

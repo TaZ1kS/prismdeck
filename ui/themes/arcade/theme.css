@@ -1,0 +1,72 @@
+/* Arcade — neon cabinet. Big tilted tiles, no bottom bar. */
+:root {
+  color-scheme: dark;
+  --pd-bg-0: #05060e;
+  --pd-bg-1: #0a0d1c;
+  --pd-bg-2: #0e1326;
+  --pd-surface: rgba(14, 19, 38, 0.82);
+  --pd-surface-strong: rgba(20, 27, 52, 0.95);
+  --pd-accent: #22d3ee;
+  --pd-accent-2: #f472b6;
+  --pd-accent-3: #a3e635;
+  --pd-accent-soft: rgba(34, 211, 238, 0.16);
+  --pd-accent-2-soft: rgba(244, 114, 182, 0.16);
+  --pd-line: rgba(34, 211, 238, 0.16);
+  --pd-line-strong: rgba(34, 211, 238, 0.3);
+  --pd-line-accent: rgba(34, 211, 238, 0.55);
+  --pd-card-skew: -1.2deg;
+  --pd-card-rotate: 0.8deg;
+  --pd-card-scale: 1;
+  --pd-radius-md: 22px;
+  --pd-radius-lg: 26px;
+}
+
+body {
+  background: linear-gradient(160deg, #05060e, #0a0d1c 45%, #0a0618);
+}
+
+/* Drop the bottom bar entirely for a cabinet look. */
+.statusbar {
+  display: none;
+}
+
+#app {
+  grid-template-rows: var(--pd-topbar-h) minmax(0, 1fr);
+  grid-template-areas:
+    "topbar topbar"
+    "sidebar content";
+}
+
+.topbar {
+  border-color: rgba(34, 211, 238, 0.35);
+  box-shadow: 0 0 40px rgba(34, 211, 238, 0.12);
+}
+
+.instance-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.instance-card {
+  padding: 22px;
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(34, 211, 238, 0.08), transparent 42%),
+    var(--pd-surface);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.08),
+    0 18px 60px rgba(34, 211, 238, 0.16);
+}
+
+.instance-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+}
+
+.instance-card__name {
+  font-size: 1.15rem;
+}
+
+.badge {
+  border-radius: 8px;
+}

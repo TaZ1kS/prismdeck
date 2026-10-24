@@ -206,12 +206,12 @@ mod tests {
     fn lists_bundled_themes() {
         let themes = list_themes().expect("repo ships a ui/themes directory");
         assert!(themes.iter().any(|theme| theme.id == "default"));
-        assert!(themes.iter().any(|theme| theme.id == "neo"));
+        assert!(themes.iter().any(|theme| theme.id == "split"));
 
-        let neon = themes.iter().find(|theme| theme.id == "neon").unwrap();
-        assert_eq!(neon.accent.as_deref(), Some("#22d3ee"));
+        let arcade = themes.iter().find(|theme| theme.id == "arcade").unwrap();
+        assert_eq!(arcade.accent.as_deref(), Some("#22d3ee"));
 
-        let css = read_theme("neo").unwrap();
+        let css = read_theme("split").unwrap();
         assert!(css.css.contains("grid-template-areas"));
     }
 }

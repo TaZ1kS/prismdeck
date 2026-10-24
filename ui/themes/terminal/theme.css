@@ -1,23 +1,25 @@
-/* Terminal — square, monochrome green. */
+/* Terminal — dense monospaced list, square corners, navigation across
+   the top. Reads like a file manager, not a card grid. */
 :root {
-  --pd-bg-0: #0a0a0a;
-  --pd-bg-1: #0f0f0f;
-  --pd-bg-2: #141414;
-  --pd-surface: rgba(20, 20, 20, 0.9);
-  --pd-surface-strong: rgba(24, 24, 24, 0.96);
-  --pd-surface-soft: rgba(255, 255, 255, 0.03);
+  color-scheme: dark;
+  --pd-bg-0: #050805;
+  --pd-bg-1: #0a0f0a;
+  --pd-bg-2: #0e140e;
+  --pd-surface: rgba(14, 20, 14, 0.9);
+  --pd-surface-strong: rgba(18, 26, 18, 0.96);
+  --pd-surface-soft: rgba(74, 222, 128, 0.05);
   --pd-line: rgba(74, 222, 128, 0.16);
-  --pd-line-strong: rgba(74, 222, 128, 0.34);
+  --pd-line-strong: rgba(74, 222, 128, 0.3);
   --pd-line-accent: rgba(74, 222, 128, 0.5);
   --pd-accent: #4ade80;
   --pd-accent-2: #22c55e;
   --pd-accent-3: #a7f3d0;
-  --pd-accent-soft: rgba(74, 222, 128, 0.12);
-  --pd-accent-2-soft: rgba(34, 197, 94, 0.12);
-  --pd-text: #e7f9ef;
-  --pd-text-soft: #b8d9c8;
-  --pd-muted: #6f9c82;
-  --pd-faint: #3f5f4b;
+  --pd-accent-soft: rgba(74, 222, 128, 0.1);
+  --pd-accent-2-soft: rgba(34, 197, 94, 0.1);
+  --pd-text: #e6fbe9;
+  --pd-text-soft: #b8d9c0;
+  --pd-muted: #6f9c7a;
+  --pd-faint: #3f5f4a;
   --pd-font-sans: var(--pd-font-mono);
   --pd-radius-sm: 0px;
   --pd-radius-md: 0px;
@@ -25,4 +27,146 @@
   --pd-radius-pill: 0px;
   --pd-card-skew: 0deg;
   --pd-card-rotate: 0deg;
+  --pd-card-scale: 1;
+  --pd-gap: 8px;
+  --pd-frame-pad: 12px;
+}
+
+body {
+  background: var(--pd-bg-0);
+}
+
+/* Navigation moves into a full-width strip under the topbar. */
+#app {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "topbar"
+    "sidebar"
+    "content"
+    "statusbar";
+}
+
+.sidebar {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 0;
+}
+
+.nav {
+  flex-direction: row;
+  gap: 6px;
+}
+
+.nav__item {
+  width: auto;
+  padding: 6px 12px;
+  border-radius: 0;
+}
+
+.nav__item::before {
+  display: none;
+}
+
+.sidebar__groups {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  overflow: visible;
+}
+
+.group-list {
+  flex-direction: row;
+  gap: 6px;
+}
+
+.group-item {
+  width: auto;
+  padding: 5px 10px;
+  border: 1px solid var(--pd-line);
+  border-radius: 0;
+}
+
+.source-card {
+  margin-top: 0;
+  margin-left: auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+}
+
+.instance-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.instance-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--pd-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.instance-card:hover {
+  background: var(--pd-surface-soft);
+  box-shadow: none;
+}
+
+.instance-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 0;
+}
+
+.instance-icon__initials {
+  font-size: 10px;
+}
+
+.instance-card__top {
+  flex: 1 1 auto;
+}
+
+.instance-card__name {
+  font-size: 0.9rem;
+}
+
+.instance-card__sub {
+  font-size: 9px;
+}
+
+.badge-row {
+  display: none;
+}
+
+.instance-card__footer {
+  flex: 0 0 auto;
+  gap: 10px;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.instance-card__group {
+  display: none;
+}
+
+.deck-head__copy h1 {
+  background: none;
+  color: var(--pd-accent);
+  -webkit-text-fill-color: var(--pd-accent);
+}
+
+.statusbar {
+  border-radius: 0;
 }

@@ -852,11 +852,17 @@ function renderThemes() {
   }
 }
 
+async function fetchThemeCss(id) {
+  const response = await fetch(`themes/${id}/theme.css`);
+  if (!response.ok) throw new Error(`theme ${id} returned ${response.status}`);
+  return response.text();
+}
+
 async function applyTheme(id) {
   state.activeTheme = id;
   try {
-    const result = await call("get_theme_css", { id });
-    setThemeCss(result.css);
+    const css = await fetchThemeCss(id);
+    setThemeCss(css);
     localStorage.setItem("prismdeck.theme", id);
     ui.themeLabel.textContent = `theme: ${id}`;
     if (state.settings) {
@@ -872,7 +878,9 @@ async function applyTheme(id) {
 
 async function loadThemes() {
   try {
-    state.themes = await call("list_themes");
+    const response = await fetch("themes/manifest.json");
+    const manifest = await response.json();
+    state.themes = Array.isArray(manifest) ? manifest : [];
   } catch {
     state.themes = [];
   }
@@ -923,8 +931,7 @@ function registerThemeEvents() {
     const id = event.payload?.id;
     if (!id || !state.activeTheme || id !== state.activeTheme) return;
     try {
-      const result = await call("get_theme_css", { id });
-      setThemeCss(result.css);
+      setThemeCss(await fetchThemeCss(id));
     } catch {
       /* ignore transient partial writes */
     }

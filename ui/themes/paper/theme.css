@@ -1,24 +1,78 @@
-/* Paper — light, calm, printed. */
+/* Paper — light, calm, centered list with soft dividers. */
 :root {
   color-scheme: light;
-  --pd-bg-0: #f4f2ec;
-  --pd-bg-1: #efede6;
-  --pd-bg-2: #e7e4da;
-  --pd-surface: rgba(255, 255, 255, 0.7);
-  --pd-surface-strong: rgba(255, 255, 255, 0.92);
-  --pd-surface-soft: rgba(0, 0, 0, 0.04);
+  --pd-bg-0: #f6f4ef;
+  --pd-bg-1: #f1efe9;
+  --pd-bg-2: #e9e6dd;
+  --pd-surface: rgba(255, 255, 255, 0.72);
+  --pd-surface-strong: rgba(255, 255, 255, 0.94);
+  --pd-surface-soft: rgba(0, 0, 0, 0.035);
   --pd-overlay: rgba(30, 28, 24, 0.5);
-  --pd-line: rgba(30, 28, 24, 0.14);
-  --pd-line-strong: rgba(30, 28, 24, 0.28);
+  --pd-line: rgba(30, 28, 24, 0.13);
+  --pd-line-strong: rgba(30, 28, 24, 0.26);
   --pd-line-accent: rgba(200, 90, 40, 0.4);
   --pd-text: #241f1a;
   --pd-text-soft: #4a4238;
   --pd-muted: #7a7164;
   --pd-faint: #a89f91;
-  --pd-ink: #f4f2ec;
-  --pd-accent: #d2691e;
-  --pd-accent-2: #8b5cf6;
+  --pd-ink: #f6f4ef;
+  --pd-accent: #c2672c;
+  --pd-accent-2: #7c5ce0;
   --pd-accent-3: #0e7490;
+  --pd-accent-soft: rgba(200, 90, 40, 0.12);
   --pd-card-skew: 0deg;
   --pd-card-rotate: 0deg;
+  --pd-card-scale: 1;
+}
+
+body {
+  background: var(--pd-bg-0);
+}
+
+.content__inner {
+  max-width: 760px;
+}
+
+.instance-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.instance-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--pd-line);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  transform: none;
+}
+
+.instance-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.instance-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.instance-card__top {
+  flex: 1 1 auto;
+}
+
+.instance-card__footer {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+  margin-left: auto;
+}
+
+.badge {
+  border-color: rgba(30, 28, 24, 0.14);
+  background: #fff;
+  color: #4a4238;
 }

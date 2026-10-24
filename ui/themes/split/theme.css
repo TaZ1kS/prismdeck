@@ -1,0 +1,57 @@
+/* Split — statusbar on top, sidebar on the right, dock at the bottom,
+   instances as wide horizontal rows. */
+:root {
+  --pd-accent: #ffd23f;
+  --pd-accent-2: #ff5d8f;
+  --pd-accent-3: #4cc9f0;
+  --pd-topbar-h: 60px;
+  --pd-sidebar-w: 248px;
+  --pd-card-skew: 0deg;
+  --pd-card-rotate: 0deg;
+}
+
+#app {
+  grid-template-columns: minmax(0, 1fr) var(--pd-sidebar-w);
+  grid-template-rows: var(--pd-statusbar-h) minmax(0, 1fr) var(--pd-topbar-h);
+  grid-template-areas:
+    "statusbar statusbar"
+    "content sidebar"
+    "topbar topbar";
+}
+
+.instance-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.instance-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+}
+
+.instance-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 16px;
+}
+
+.instance-card__top {
+  flex: 1 1 auto;
+}
+
+.instance-card__name {
+  font-size: 1.2rem;
+}
+
+.instance-card__footer {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+  margin-left: auto;
+}
+
+.instance-card__group {
+  display: none;
+}

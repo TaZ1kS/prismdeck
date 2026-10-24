@@ -72,11 +72,11 @@ fixtures/    fake Prism data for tests (no Prism install required)
 
 ## Theming
 
-A theme is **one CSS file**. It can change all design tokens and rewrite the
-app's named CSS grid areas, so the entire layout can move, skew, rotate or
-hide regions without touching JavaScript.
+A theme is **one CSS file** that can re-skin or completely re-arrange the app:
+five bundled themes range from a card grid to a terminal-style list to a dock
+layout. Edits hot-reload in development.
 
-See `docs/THEMES.md` (coming in M5).
+See `docs/THEMES.md`.
 
 ## License
 

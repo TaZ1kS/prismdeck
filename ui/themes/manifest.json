@@ -1,0 +1,7 @@
+[
+  { "id": "default", "name": "Default", "accent": "#ff7a45" },
+  { "id": "arcade", "name": "Arcade", "accent": "#22d3ee" },
+  { "id": "terminal", "name": "Terminal", "accent": "#4ade80" },
+  { "id": "paper", "name": "Paper", "accent": "#c2672c" },
+  { "id": "split", "name": "Split", "accent": "#ffd23f" }
+]

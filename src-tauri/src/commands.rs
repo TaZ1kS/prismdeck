@@ -5,7 +5,8 @@ use tauri::{AppHandle, State};
 
 use crate::launch::{self, LaunchOptions, LaunchRun, RunInfo, RunLogs};
 use crate::prism;
-use crate::prism::types::{PrismInstall, PrismSnapshot};
+use crate::prism::types::{PrismInstall, PrismKind, PrismSnapshot};
+use crate::settings::{self, Settings};
 use crate::state::AppState;
 use crate::theme::{self, ThemeCss, ThemeInfo};
 
@@ -53,18 +54,60 @@ pub async fn detect_prism() -> Result<Vec<PrismInstall>, String> {
 }
 
 /// Select an installation and scan it. The frontend sends back an object from
-/// `detect_prism` (or a future manual picker), so all paths are validated by
-/// `scan_install` before use.
+/// `detect_prism` (or the manual picker), so all paths are validated by
+/// `scan_install` before use. The selection is persisted.
 #[tauri::command]
 pub async fn set_prism_install(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    install: PrismInstall,
+) -> Result<PrismSnapshot, String> {
+    let snapshot = scan_apply(state, install.clone()).await?;
+    let _ = settings::set_install(&app, install);
+    Ok(snapshot)
+}
+
+async fn scan_apply(
     state: State<'_, AppState>,
     install: PrismInstall,
 ) -> Result<PrismSnapshot, String> {
     let snapshot = tauri::async_runtime::spawn_blocking(move || prism::scan_install(&install))
         .await
         .map_err(task_error)??;
-
     *state.snapshot.write().map_err(|_| lock_error())? = snapshot.clone();
+    Ok(snapshot)
+}
+
+/// Manual override for portable/custom folders the auto-detector missed.
+#[tauri::command]
+pub async fn set_custom_install(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    data_dir: String,
+    exe: Option<String>,
+) -> Result<PrismSnapshot, String> {
+    let exe = exe
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty());
+    let kind = if exe.is_some() {
+        PrismKind::Custom
+    } else {
+        PrismKind::DataOnly
+    };
+    let install = PrismInstall {
+        id: format!("custom|{}|{}", data_dir, exe.as_deref().unwrap_or("")),
+        kind,
+        label: "Custom Prism data".to_string(),
+        exe,
+        app_id: None,
+        data_dir: data_dir.trim().to_string(),
+        source: "manual override".to_string(),
+        valid: true,
+        version: None,
+    };
+
+    let snapshot = scan_apply(state, install.clone()).await?;
+    let _ = settings::set_install(&app, install);
     Ok(snapshot)
 }
 
@@ -164,4 +207,15 @@ pub fn list_themes() -> Result<Vec<ThemeInfo>, String> {
 #[tauri::command]
 pub fn get_theme_css(id: String) -> Result<ThemeCss, String> {
     theme::read_theme(&id)
+}
+
+#[tauri::command]
+pub fn get_settings(app: AppHandle) -> Result<Settings, String> {
+    settings::load(&app)
+}
+
+#[tauri::command]
+pub fn save_settings(app: AppHandle, settings: Settings) -> Result<Settings, String> {
+    settings::save(&app, &settings)?;
+    Ok(settings)
 }

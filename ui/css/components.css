@@ -1524,3 +1524,28 @@
   letter-spacing: 0.08em;
   color: var(--pd-accent);
 }
+
+.custom-install {
+  border: 1px solid var(--pd-line);
+  border-radius: 12px;
+  background: var(--pd-surface-soft);
+}
+
+.custom-install summary {
+  padding: 11px 14px;
+  cursor: pointer;
+  font-family: var(--pd-font-mono);
+  font-size: 11px;
+  color: var(--pd-muted);
+  user-select: none;
+}
+
+.custom-install summary:hover {
+  color: var(--pd-text);
+}
+
+.custom-install__body {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px 14px;
+}

@@ -64,7 +64,8 @@ PrismDeck's own app config directory.
 
 ## Current scope
 
-M0–M5 are implemented: Tauri shell, Linux/Windows discovery, instance
+M0–M6 are implemented: Tauri shell, Linux/Windows discovery, instance
 parsing, the launch engine with wrapper support and a live console, the deck
-UI, and the one-file theme engine with hot reload. Remaining: settings (M6),
-packaging (M7) and release (M8).
+UI, the one-file theme engine with hot reload, and settings persistence
+(selected install, theme, wrapper and launch options in
+`<config>/settings.json`). Remaining: packaging (M7) and release (M8).

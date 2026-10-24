@@ -69,6 +69,9 @@ const ui = {
   themesPanel: $("#themes-panel"),
   themeList: $("#theme-list"),
   themeNote: $("#theme-note"),
+  customDataDir: $("#custom-data-dir"),
+  customExe: $("#custom-exe"),
+  customApply: $("#custom-apply"),
   content: $('[data-region="content"]'),
 };
 
@@ -91,6 +94,7 @@ const state = {
   view: "instances",
   themes: [],
   activeTheme: null,
+  settings: null,
 };
 
 // ── IPC helpers ────────────────────────────────────────────────
@@ -746,6 +750,26 @@ async function handleDemo() {
   await withLoading(loadDemoSnapshot);
 }
 
+async function handleCustomInstall() {
+  const dataDir = ui.customDataDir.value.trim();
+  if (!dataDir) {
+    ui.customDataDir.focus();
+    return;
+  }
+  const exe = ui.customExe.value.trim() || null;
+
+  await withLoading(async () => {
+    const snapshot = await call("set_custom_install", { dataDir, exe });
+    state.snapshot = snapshot;
+    ensureInstall(snapshot.install);
+    state.group = null;
+    state.query = "";
+    ui.search.value = "";
+    ui.customDataDir.value = "";
+    ui.customExe.value = "";
+  });
+}
+
 function clearFilters() {
   state.query = "";
   state.group = null;
@@ -835,6 +859,10 @@ async function applyTheme(id) {
     setThemeCss(result.css);
     localStorage.setItem("prismdeck.theme", id);
     ui.themeLabel.textContent = `theme: ${id}`;
+    if (state.settings) {
+      state.settings.theme = id;
+      await persistSettings();
+    }
   } catch (error) {
     setThemeCss(null);
     ui.themeNote.textContent = `Could not load theme ${id}: ${errorMessage(error)}`;
@@ -849,13 +877,41 @@ async function loadThemes() {
     state.themes = [];
   }
 
-  const stored = localStorage.getItem("prismdeck.theme");
+  const stored = state.settings?.theme || localStorage.getItem("prismdeck.theme");
   const id = state.themes.some((theme) => theme.id === stored) ? stored : "default";
   if (state.themes.some((theme) => theme.id === id)) {
     await applyTheme(id);
   } else {
     state.activeTheme = "default";
     ui.themeLabel.textContent = "theme: default";
+  }
+}
+
+async function loadSettings() {
+  try {
+    state.settings = await call("get_settings");
+  } catch {
+    state.settings = {
+      theme: null,
+      wrapper: null,
+      offline: false,
+      showWindow: false,
+      server: null,
+      world: null,
+    };
+  }
+
+  ui.modalWrapper.value = state.settings.wrapper || "";
+  ui.modalOffline.checked = Boolean(state.settings.offline);
+  ui.modalShowWindow.checked = Boolean(state.settings.showWindow);
+}
+
+async function persistSettings() {
+  if (!state.settings) return;
+  try {
+    state.settings = await call("save_settings", { settings: state.settings });
+  } catch {
+    /* persistence is best-effort */
   }
 }
 
@@ -971,6 +1027,13 @@ async function launchInstance(instanceArg) {
     showWindow: ui.modalShowWindow.checked,
     offline: ui.modalOffline.checked,
   };
+
+  if (state.settings) {
+    state.settings.wrapper = options.wrapper;
+    state.settings.offline = options.offline;
+    state.settings.showWindow = options.showWindow;
+    await persistSettings();
+  }
 
   ui.modalLaunch.disabled = true;
   ui.modalLaunch.textContent = "Launching…";
@@ -1123,6 +1186,7 @@ ui.retryDetect.addEventListener("click", handleDetect);
 ui.errorRetry.addEventListener("click", handleDetect);
 ui.demoBtn.addEventListener("click", handleDemo);
 ui.errorDemo.addEventListener("click", handleDemo);
+ui.customApply.addEventListener("click", handleCustomInstall);
 ui.clearFilter.addEventListener("click", clearFilters);
 ui.emptyClear.addEventListener("click", clearFilters);
 ui.modalLaunch.addEventListener("click", launchInstance);
@@ -1196,9 +1260,16 @@ async function boot() {
     }`;
     ui.demoBtn.hidden = !state.appInfo.demo_data_available;
     ui.errorDemo.hidden = !state.appInfo.demo_data_available;
+    await loadSettings();
     await loadThemes();
     if (state.appInfo.demo_auto && state.appInfo.demo_data_available) {
       await loadDemoSnapshot();
+    } else if (state.settings?.install) {
+      try {
+        await selectInstall(state.settings.install);
+      } catch {
+        await detectAndSelect();
+      }
     } else {
       await detectAndSelect();
     }

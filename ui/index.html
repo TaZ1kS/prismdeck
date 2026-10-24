@@ -108,6 +108,37 @@
 
             <div id="detected-list" class="detected-list"></div>
 
+            <details class="custom-install">
+              <summary>Use a specific folder</summary>
+              <div class="custom-install__body">
+                <label class="field">
+                  <span class="field__label">Prism data folder</span>
+                  <input
+                    id="custom-data-dir"
+                    class="input"
+                    type="text"
+                    placeholder="~/.local/share/PrismLauncher"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                </label>
+                <label class="field">
+                  <span class="field__label">Executable (optional)</span>
+                  <input
+                    id="custom-exe"
+                    class="input"
+                    type="text"
+                    placeholder="/usr/bin/prismlauncher"
+                    autocomplete="off"
+                    spellcheck="false"
+                  />
+                </label>
+                <button id="custom-apply" class="btn btn--ghost btn--small" type="button">
+                  Use this folder
+                </button>
+              </div>
+            </details>
+
             <div class="onboarding__hint">
               <span class="eyebrow">expected locations</span>
               <ul class="path-list">

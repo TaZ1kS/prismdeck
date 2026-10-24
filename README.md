@@ -13,7 +13,7 @@ Prism.
 
 ## Status
 
-Early development. Current milestone: **M6 — settings & persistence**.
+Early development. Current milestone: **M7 — packaging**.
 
 - [x] Tauri v2 + vanilla frontend scaffold
 - [x] Prism discovery (native / Flatpak / portable / custom / data-only)
@@ -22,11 +22,12 @@ Early development. Current milestone: **M6 — settings & persistence**.
 - [x] live stdout/stderr console with stop / force-stop
 - [x] instance deck UI (search, group filters, detail modal, onboarding)
 - [x] one-file CSS themes + hot reload
-- [ ] settings persistence (selected install, wrapper command)
+- [x] settings persistence (selected install, theme, wrapper, launch options)
 - [ ] Linux AppImage/deb + Windows MSI release
 
-No Prism installed? The app shows onboarding and can load the bundled
-`fixtures/` demo deck (`PRISMDECK_DEMO=1` auto-loads it in development).
+No Prism installed? The app shows onboarding, a manual folder override, and can
+load the bundled `fixtures/` demo deck (`PRISMDECK_DEMO=1` auto-loads it in
+development).
 
 ## Requirements
 

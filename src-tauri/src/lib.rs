@@ -1,6 +1,7 @@
 mod commands;
 mod launch;
 mod prism;
+mod settings;
 mod state;
 mod theme;
 
@@ -23,6 +24,9 @@ pub fn run() {
             commands::get_run_logs,
             commands::list_themes,
             commands::get_theme_css,
+            commands::get_settings,
+            commands::save_settings,
+            commands::set_custom_install,
         ])
         .setup(|app| {
             theme::watch_themes(app.handle().clone());

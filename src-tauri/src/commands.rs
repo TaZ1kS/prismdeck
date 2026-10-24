@@ -7,6 +7,7 @@ use crate::launch::{self, LaunchOptions, LaunchRun, RunInfo, RunLogs};
 use crate::prism;
 use crate::prism::types::{PrismInstall, PrismSnapshot};
 use crate::state::AppState;
+use crate::theme::{self, ThemeCss, ThemeInfo};
 
 #[derive(Debug, Serialize)]
 pub struct AppInfo {
@@ -153,4 +154,14 @@ pub fn list_runs(app: AppHandle) -> Result<Vec<RunInfo>, String> {
 #[tauri::command]
 pub fn get_run_logs(app: AppHandle, run_id: String) -> Result<RunLogs, String> {
     launch::get_logs(&app, &run_id)
+}
+
+#[tauri::command]
+pub fn list_themes() -> Result<Vec<ThemeInfo>, String> {
+    theme::list_themes()
+}
+
+#[tauri::command]
+pub fn get_theme_css(id: String) -> Result<ThemeCss, String> {
+    theme::read_theme(&id)
 }

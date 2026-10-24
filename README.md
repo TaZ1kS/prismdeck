@@ -13,7 +13,7 @@ Prism.
 
 ## Status
 
-Early development. Current milestone: **M4 — UI shell**.
+Early development. Current milestone: **M6 — settings & persistence**.
 
 - [x] Tauri v2 + vanilla frontend scaffold
 - [x] Prism discovery (native / Flatpak / portable / custom / data-only)
@@ -21,7 +21,7 @@ Early development. Current milestone: **M4 — UI shell**.
 - [x] launch engine with Gamescope / GameMode wrappers
 - [x] live stdout/stderr console with stop / force-stop
 - [x] instance deck UI (search, group filters, detail modal, onboarding)
-- [ ] one-file CSS themes + hot reload
+- [x] one-file CSS themes + hot reload
 - [ ] settings persistence (selected install, wrapper command)
 - [ ] Linux AppImage/deb + Windows MSI release
 

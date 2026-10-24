@@ -45,8 +45,8 @@
           <button class="nav__item is-active" type="button" data-nav="instances">
             Instances
           </button>
-          <button class="nav__item" type="button" data-nav="themes" disabled>
-            Themes <span class="nav__tag">M5</span>
+          <button class="nav__item" type="button" data-nav="themes">
+            Themes
           </button>
           <button class="nav__item" type="button" data-nav="settings" disabled>
             Settings <span class="nav__tag">M6</span>
@@ -189,6 +189,19 @@
                 Clear filters
               </button>
             </div>
+          </section>
+
+          <section id="themes-panel" class="panel themes" hidden>
+            <div class="themes__head">
+              <span class="eyebrow">themes</span>
+              <h1>Pick a theme.</h1>
+              <p class="hero__copy">
+                Each theme is a single CSS file. Edit its
+                <code>theme.css</code> and it hot-reloads instantly.
+              </p>
+            </div>
+            <div id="theme-list" class="theme-list"></div>
+            <p id="theme-note" class="hint"></p>
           </section>
         </div>
       </main>

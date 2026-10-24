@@ -1,0 +1,15 @@
+/* Neon — tilted, glowing cards. */
+:root {
+  --pd-accent: #22d3ee;
+  --pd-accent-2: #f472b6;
+  --pd-accent-3: #a3e635;
+  --pd-accent-soft: rgba(34, 211, 238, 0.14);
+  --pd-accent-2-soft: rgba(244, 114, 182, 0.14);
+  --pd-line-accent: rgba(34, 211, 238, 0.45);
+  --pd-surface: rgba(10, 16, 30, 0.82);
+  --pd-card-skew: -1.5deg;
+  --pd-card-rotate: 0.6deg;
+  --pd-card-scale: 1.02;
+  --pd-shadow-glow: 0 0 0 1px rgba(34, 211, 238, 0.12),
+    0 0 40px rgba(34, 211, 238, 0.18);
+}

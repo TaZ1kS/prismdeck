@@ -1,0 +1,24 @@
+/* Paper — light, calm, printed. */
+:root {
+  color-scheme: light;
+  --pd-bg-0: #f4f2ec;
+  --pd-bg-1: #efede6;
+  --pd-bg-2: #e7e4da;
+  --pd-surface: rgba(255, 255, 255, 0.7);
+  --pd-surface-strong: rgba(255, 255, 255, 0.92);
+  --pd-surface-soft: rgba(0, 0, 0, 0.04);
+  --pd-overlay: rgba(30, 28, 24, 0.5);
+  --pd-line: rgba(30, 28, 24, 0.14);
+  --pd-line-strong: rgba(30, 28, 24, 0.28);
+  --pd-line-accent: rgba(200, 90, 40, 0.4);
+  --pd-text: #241f1a;
+  --pd-text-soft: #4a4238;
+  --pd-muted: #7a7164;
+  --pd-faint: #a89f91;
+  --pd-ink: #f4f2ec;
+  --pd-accent: #d2691e;
+  --pd-accent-2: #8b5cf6;
+  --pd-accent-3: #0e7490;
+  --pd-card-skew: 0deg;
+  --pd-card-rotate: 0deg;
+}

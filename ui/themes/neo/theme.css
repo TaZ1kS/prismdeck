@@ -1,0 +1,19 @@
+/* Neo — statusbar on top, sidebar on the right, topbar at the bottom. */
+:root {
+  --pd-accent: #ffd23f;
+  --pd-accent-2: #ff5d8f;
+  --pd-accent-3: #4cc9f0;
+  --pd-topbar-h: 60px;
+  --pd-sidebar-w: 240px;
+  --pd-card-skew: 0.8deg;
+  --pd-card-rotate: -0.5deg;
+}
+
+#app {
+  grid-template-columns: minmax(0, 1fr) var(--pd-sidebar-w);
+  grid-template-rows: var(--pd-statusbar-h) minmax(0, 1fr) var(--pd-topbar-h);
+  grid-template-areas:
+    "statusbar statusbar"
+    "content sidebar"
+    "topbar topbar";
+}

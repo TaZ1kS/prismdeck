@@ -1,0 +1,28 @@
+/* Terminal — square, monochrome green. */
+:root {
+  --pd-bg-0: #0a0a0a;
+  --pd-bg-1: #0f0f0f;
+  --pd-bg-2: #141414;
+  --pd-surface: rgba(20, 20, 20, 0.9);
+  --pd-surface-strong: rgba(24, 24, 24, 0.96);
+  --pd-surface-soft: rgba(255, 255, 255, 0.03);
+  --pd-line: rgba(74, 222, 128, 0.16);
+  --pd-line-strong: rgba(74, 222, 128, 0.34);
+  --pd-line-accent: rgba(74, 222, 128, 0.5);
+  --pd-accent: #4ade80;
+  --pd-accent-2: #22c55e;
+  --pd-accent-3: #a7f3d0;
+  --pd-accent-soft: rgba(74, 222, 128, 0.12);
+  --pd-accent-2-soft: rgba(34, 197, 94, 0.12);
+  --pd-text: #e7f9ef;
+  --pd-text-soft: #b8d9c8;
+  --pd-muted: #6f9c82;
+  --pd-faint: #3f5f4b;
+  --pd-font-sans: var(--pd-font-mono);
+  --pd-radius-sm: 0px;
+  --pd-radius-md: 0px;
+  --pd-radius-lg: 0px;
+  --pd-radius-pill: 0px;
+  --pd-card-skew: 0deg;
+  --pd-card-rotate: 0deg;
+}

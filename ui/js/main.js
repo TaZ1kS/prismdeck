@@ -66,6 +66,9 @@ const ui = {
   consoleStop: $("#console-stop"),
   consoleClose: $("#console-close"),
   consoleHint: $("#console-hint"),
+  themesPanel: $("#themes-panel"),
+  themeList: $("#theme-list"),
+  themeNote: $("#theme-note"),
   content: $('[data-region="content"]'),
 };
 
@@ -85,6 +88,9 @@ const state = {
   currentRun: null,
   consoleLines: [],
   consoleScrollLock: false,
+  view: "instances",
+  themes: [],
+  activeTheme: null,
 };
 
 // ── IPC helpers ────────────────────────────────────────────────
@@ -663,20 +669,25 @@ function render() {
   const hasSnapshot = Boolean(state.snapshot?.install);
   const showLoading = state.loading && !hasSnapshot;
   const showError = !state.loading && Boolean(state.error);
-  const showOnboarding = !state.loading && !showError && !hasSnapshot;
-  const showDeck = !showError && hasSnapshot;
+  const showOnboarding =
+    !state.loading && !showError && !hasSnapshot && state.view === "instances";
+  const showDeck = !showError && hasSnapshot && state.view === "instances";
+  const showThemes = !state.loading && !showError && state.view === "themes";
 
   ui.loading.hidden = !showLoading;
   ui.errorPanel.hidden = !showError;
   ui.onboarding.hidden = !showOnboarding;
   ui.dashboard.hidden = !showDeck;
+  ui.themesPanel.hidden = !showThemes;
 
   renderSources();
   renderStatus();
+  renderNav();
 
   if (showError) renderError();
   if (showOnboarding) renderOnboarding();
   if (showDeck) renderDeck();
+  if (showThemes) renderThemes();
 
   ui.app.dataset.ready = "true";
 }
@@ -740,6 +751,128 @@ function clearFilters() {
   state.group = null;
   ui.search.value = "";
   render();
+}
+
+// ── Themes ─────────────────────────────────────────────────────
+
+const THEME_STYLE_ID = "pd-theme-live";
+
+function renderNav() {
+  for (const item of document.querySelectorAll(".nav__item")) {
+    const name = item.dataset.nav;
+    if (!name) continue;
+    item.classList.toggle("is-active", state.view === name);
+  }
+}
+
+function setThemeCss(css) {
+  let style = document.getElementById(THEME_STYLE_ID);
+  if (!css) {
+    if (style) style.remove();
+    return;
+  }
+  if (!style) {
+    style = document.createElement("style");
+    style.id = THEME_STYLE_ID;
+    document.head.append(style);
+  }
+  style.textContent = css;
+}
+
+function renderThemes() {
+  ui.themeList.replaceChildren();
+
+  if (state.themes.length === 0) {
+    ui.themeNote.textContent =
+      "No themes found. Expected a ui/themes directory next to the app.";
+    return;
+  }
+
+  ui.themeNote.textContent = `Live reload is on — edit any theme.css and it re-applies. ${plural(
+    state.themes.length,
+    "theme"
+  )} found.`;
+
+  for (const theme of state.themes) {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "theme-card";
+    card.dataset.themeId = theme.id;
+    if (state.activeTheme === theme.id) card.classList.add("is-active");
+
+    const swatch = document.createElement("span");
+    swatch.className = "theme-card__swatch";
+    if (theme.accent) {
+      swatch.style.background = `linear-gradient(135deg, ${theme.accent}, var(--pd-accent-2))`;
+    }
+
+    const meta = document.createElement("span");
+    meta.className = "theme-card__meta";
+    const name = document.createElement("span");
+    name.className = "theme-card__name";
+    name.textContent = theme.name;
+    const id = document.createElement("span");
+    id.className = "theme-card__id";
+    id.textContent = theme.id;
+    meta.append(name, id);
+
+    card.append(swatch, meta);
+    if (state.activeTheme === theme.id) {
+      const active = document.createElement("span");
+      active.className = "theme-card__active";
+      active.textContent = "active";
+      card.append(active);
+    }
+    card.addEventListener("click", () => applyTheme(theme.id));
+    ui.themeList.append(card);
+  }
+}
+
+async function applyTheme(id) {
+  state.activeTheme = id;
+  try {
+    const result = await call("get_theme_css", { id });
+    setThemeCss(result.css);
+    localStorage.setItem("prismdeck.theme", id);
+    ui.themeLabel.textContent = `theme: ${id}`;
+  } catch (error) {
+    setThemeCss(null);
+    ui.themeNote.textContent = `Could not load theme ${id}: ${errorMessage(error)}`;
+  }
+  renderThemes();
+}
+
+async function loadThemes() {
+  try {
+    state.themes = await call("list_themes");
+  } catch {
+    state.themes = [];
+  }
+
+  const stored = localStorage.getItem("prismdeck.theme");
+  const id = state.themes.some((theme) => theme.id === stored) ? stored : "default";
+  if (state.themes.some((theme) => theme.id === id)) {
+    await applyTheme(id);
+  } else {
+    state.activeTheme = "default";
+    ui.themeLabel.textContent = "theme: default";
+  }
+}
+
+function registerThemeEvents() {
+  const events = tauri?.event;
+  if (!events?.listen) return;
+
+  events.listen("theme-changed", async (event) => {
+    const id = event.payload?.id;
+    if (!id || !state.activeTheme || id !== state.activeTheme) return;
+    try {
+      const result = await call("get_theme_css", { id });
+      setThemeCss(result.css);
+    } catch {
+      /* ignore transient partial writes */
+    }
+  });
 }
 
 // ── Instance modal ─────────────────────────────────────────────
@@ -996,6 +1129,13 @@ ui.modalLaunch.addEventListener("click", launchInstance);
 ui.modalConsole.addEventListener("click", openConsoleForCurrentRun);
 ui.consoleStop.addEventListener("click", stopRun);
 
+for (const item of document.querySelectorAll(".nav__item:not(:disabled)")) {
+  item.addEventListener("click", () => {
+    state.view = item.dataset.nav || "instances";
+    render();
+  });
+}
+
 ui.sourceSelect.addEventListener("change", () => {
   const install = state.installs.find((item) => item.id === ui.sourceSelect.value);
   if (install) handleInstallChoice(install);
@@ -1045,6 +1185,7 @@ document.addEventListener("keydown", (event) => {
 
 async function boot() {
   registerRunEvents();
+  registerThemeEvents();
   state.loading = true;
   render();
 
@@ -1055,6 +1196,7 @@ async function boot() {
     }`;
     ui.demoBtn.hidden = !state.appInfo.demo_data_available;
     ui.errorDemo.hidden = !state.appInfo.demo_data_available;
+    await loadThemes();
     if (state.appInfo.demo_auto && state.appInfo.demo_data_available) {
       await loadDemoSnapshot();
     } else {

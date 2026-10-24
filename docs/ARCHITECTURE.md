@@ -58,12 +58,13 @@ PrismDeck's own app config directory.
   webview. This avoids flooding WebKit with thousands of IPC events.
 - On Linux each launch starts a new session (`setsid`) so the whole process
   tree can be signalled with `kill(-pid, …)`. Windows uses `taskkill /T`.
-- Themes will be watched by a `notify` debouncer (100 ms) and pushed to the
-  frontend as a single CSS payload (M5).
+- Themes are watched by a `notify` debouncer (120 ms) and pushed to the
+  frontend via a `theme-changed` event; the frontend re-fetches the active
+  theme's CSS and re-applies it.
 
 ## Current scope
 
-M0–M4 are implemented: Tauri shell, Linux/Windows discovery, instance
-parsing, the launch engine with wrapper support and a live console, and the
-deck UI. Remaining: themes (M5), settings (M6), packaging (M7) and release
-(M8).
+M0–M5 are implemented: Tauri shell, Linux/Windows discovery, instance
+parsing, the launch engine with wrapper support and a live console, the deck
+UI, and the one-file theme engine with hot reload. Remaining: settings (M6),
+packaging (M7) and release (M8).

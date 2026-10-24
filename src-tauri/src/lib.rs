@@ -2,6 +2,7 @@ mod commands;
 mod launch;
 mod prism;
 mod state;
+mod theme;
 
 pub fn run() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
@@ -20,7 +21,13 @@ pub fn run() {
             commands::stop_run,
             commands::list_runs,
             commands::get_run_logs,
+            commands::list_themes,
+            commands::get_theme_css,
         ])
+        .setup(|app| {
+            theme::watch_themes(app.handle().clone());
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("failed to run PrismDeck");
 }

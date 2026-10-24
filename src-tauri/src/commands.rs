@@ -1,8 +1,9 @@
 use std::fmt::Display;
 
 use serde::Serialize;
-use tauri::State;
+use tauri::{AppHandle, State};
 
+use crate::launch::{self, LaunchOptions, LaunchRun, RunInfo, RunLogs};
 use crate::prism;
 use crate::prism::types::{PrismInstall, PrismSnapshot};
 use crate::state::AppState;
@@ -15,6 +16,8 @@ pub struct AppInfo {
     arch: &'static str,
     debug: bool,
     demo_data_available: bool,
+    demo_auto: bool,
+    auto_launch: bool,
 }
 
 #[tauri::command]
@@ -26,6 +29,8 @@ pub fn app_info() -> AppInfo {
         arch: std::env::consts::ARCH,
         debug: cfg!(debug_assertions),
         demo_data_available: prism::demo_install().is_ok(),
+        demo_auto: std::env::var_os("PRISMDECK_DEMO").is_some(),
+        auto_launch: std::env::var_os("PRISMDECK_AUTOLAUNCH").is_some(),
     }
 }
 
@@ -120,4 +125,32 @@ pub fn get_instance_icon(
     };
 
     Ok(prism::instance::icon_data_url(std::path::Path::new(path)))
+}
+
+/// Launch an instance through the Prism CLI. The wrapper command, if any, is
+/// parsed as argv and prepended to the Prism command; no shell is involved.
+#[tauri::command]
+pub fn launch_instance(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    instance_id: String,
+    options: Option<LaunchOptions>,
+) -> Result<LaunchRun, String> {
+    launch::launch(app, state, instance_id, options)
+}
+
+/// Ask the process tree to stop. A second call escalates to a force kill.
+#[tauri::command]
+pub fn stop_run(app: AppHandle, run_id: String) -> Result<RunInfo, String> {
+    launch::stop(&app, &run_id)
+}
+
+#[tauri::command]
+pub fn list_runs(app: AppHandle) -> Result<Vec<RunInfo>, String> {
+    launch::list(&app)
+}
+
+#[tauri::command]
+pub fn get_run_logs(app: AppHandle, run_id: String) -> Result<RunLogs, String> {
+    launch::get_logs(&app, &run_id)
 }

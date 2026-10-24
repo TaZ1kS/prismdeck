@@ -1,4 +1,5 @@
 mod commands;
+mod launch;
 mod prism;
 mod state;
 
@@ -15,6 +16,10 @@ pub fn run() {
             commands::list_instances,
             commands::load_demo_data,
             commands::get_instance_icon,
+            commands::launch_instance,
+            commands::stop_run,
+            commands::list_runs,
+            commands::get_run_logs,
         ])
         .run(tauri::generate_context!())
         .expect("failed to run PrismDeck");

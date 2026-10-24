@@ -124,7 +124,7 @@ pub fn demo_install() -> Result<PrismInstall, String> {
     Ok(PrismInstall {
         id: format!("demo|{}|", data_dir.display()),
         kind: PrismKind::Custom,
-        label: "PrismDeck demo data".to_string(),
+        label: "Demo fixtures".to_string(),
         exe: None,
         app_id: None,
         data_dir: data_dir.to_string_lossy().to_string(),

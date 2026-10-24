@@ -24,8 +24,8 @@
   border-radius: var(--pd-radius-md);
   background: var(--pd-surface);
   box-shadow: var(--pd-shadow-card);
-  -webkit-backdrop-filter: blur(16px) saturate(130%);
-  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(var(--pd-backdrop-blur)) saturate(130%);
+  backdrop-filter: blur(var(--pd-backdrop-blur)) saturate(130%);
   transform: skewX(var(--pd-topbar-skew));
   transition: transform var(--pd-transition-base), background var(--pd-transition-base);
 }
@@ -104,8 +104,8 @@
   border-radius: var(--pd-radius-md);
   background: var(--pd-surface);
   box-shadow: var(--pd-shadow-card);
-  -webkit-backdrop-filter: blur(16px) saturate(120%);
-  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(var(--pd-backdrop-blur)) saturate(120%);
+  backdrop-filter: blur(var(--pd-backdrop-blur)) saturate(120%);
   transform: skewX(var(--pd-sidebar-skew));
   transition: transform var(--pd-transition-base), background var(--pd-transition-base);
 }
@@ -840,6 +840,7 @@
   height: 100%;
   object-fit: cover;
   background: var(--pd-bg-2);
+  filter: var(--pd-icon-filter);
 }
 
 .instance-icon__initials.is-hidden {
@@ -1548,4 +1549,105 @@
   display: grid;
   gap: 12px;
   padding: 0 14px 14px;
+}
+
+/* ── Settings ────────────────────────────────────────────────── */
+
+.settings__head h1 {
+  margin: 6px 0 8px;
+  font-family: var(--pd-font-display);
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  background: linear-gradient(110deg, var(--pd-text) 20%, var(--pd-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.settings__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--pd-line);
+  border-radius: var(--pd-radius-md);
+  background: var(--pd-surface);
+}
+
+.settings-section h2 {
+  font-size: var(--pd-text-md);
+  font-weight: var(--pd-weight-medium);
+  letter-spacing: -0.01em;
+}
+
+.settings-section__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.settings-section__hint {
+  font-family: var(--pd-font-mono);
+  font-size: 10px;
+  color: var(--pd-faint);
+}
+
+.settings-section__value {
+  font-family: var(--pd-font-mono);
+  font-size: 11px;
+  color: var(--pd-muted);
+  overflow-wrap: anywhere;
+}
+
+.settings-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.settings-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--pd-line);
+  border-radius: 8px;
+  background: var(--pd-surface-soft);
+}
+
+.settings-list li span {
+  font-family: var(--pd-font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pd-faint);
+}
+
+.settings-list code {
+  font-family: var(--pd-font-mono);
+  font-size: 11px;
+  color: var(--pd-text-soft);
+}
+
+/* scheme badge on theme cards */
+.theme-card__scheme {
+  margin-left: auto;
+  padding: 2px 7px;
+  border: 1px solid var(--pd-line);
+  border-radius: var(--pd-radius-pill);
+  font-family: var(--pd-font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pd-muted);
 }

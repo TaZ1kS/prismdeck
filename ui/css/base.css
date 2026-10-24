@@ -59,8 +59,8 @@ h3 {
 }
 
 ::selection {
-  background: var(--pd-accent-soft);
-  color: var(--pd-text);
+  background: var(--pd-selection-bg);
+  color: var(--pd-selection-fg);
 }
 
 :focus-visible {
@@ -74,14 +74,14 @@ h3 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: var(--pd-scrollbar-thumb);
   border: 3px solid transparent;
   background-clip: padding-box;
   border-radius: var(--pd-radius-pill);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.35);
+  background: var(--pd-scrollbar-thumb-hover);
   border: 3px solid transparent;
   background-clip: padding-box;
 }

@@ -48,8 +48,8 @@
           <button class="nav__item" type="button" data-nav="themes">
             Themes
           </button>
-          <button class="nav__item" type="button" data-nav="settings" disabled>
-            Settings <span class="nav__tag">M6</span>
+          <button class="nav__item" type="button" data-nav="settings">
+            Settings
           </button>
         </nav>
 
@@ -233,6 +233,74 @@
             </div>
             <div id="theme-list" class="theme-list"></div>
             <p id="theme-note" class="hint"></p>
+          </section>
+
+          <section id="settings-panel" class="panel settings" hidden>
+            <div class="settings__head">
+              <span class="eyebrow">settings</span>
+              <h1>Settings.</h1>
+              <p class="hero__copy">
+                Tuning lives here. Most controls are placeholders for now —
+                they get wired up next.
+              </p>
+            </div>
+
+            <div class="settings__grid">
+              <section class="settings-section">
+                <h2>Appearance</h2>
+                <label class="field">
+                  <span class="field__label">Theme</span>
+                  <select id="settings-theme" class="select"></select>
+                </label>
+                <div class="settings-section__hint">
+                  Themes are single CSS files. Browse more in the Themes tab.
+                </div>
+              </section>
+
+              <section class="settings-section">
+                <h2>Launch defaults</h2>
+                <label class="field">
+                  <span class="field__label">Wrapper command</span>
+                  <input
+                    id="settings-wrapper"
+                    class="input"
+                    type="text"
+                    placeholder="gamescope -f --"
+                    disabled
+                  />
+                </label>
+                <div class="settings-section__row">
+                  <label class="check">
+                    <input id="settings-offline" type="checkbox" disabled />
+                    <span>Offline mode</span>
+                  </label>
+                  <label class="check">
+                    <input id="settings-show-window" type="checkbox" disabled />
+                    <span>Show Prism window</span>
+                  </label>
+                </div>
+                <div class="settings-section__hint">Coming soon.</div>
+              </section>
+
+              <section class="settings-section">
+                <h2>Prism</h2>
+                <p id="settings-install" class="settings-section__value">
+                  No source selected.
+                </p>
+                <button id="settings-detect" class="btn btn--ghost btn--small" type="button">
+                  Detect again
+                </button>
+              </section>
+
+              <section class="settings-section">
+                <h2>About</h2>
+                <ul class="settings-list">
+                  <li><span>Version</span><code id="settings-version">0.1.0</code></li>
+                  <li><span>Platform</span><code id="settings-platform">—</code></li>
+                  <li><span>Theme</span><code id="settings-theme-label">default</code></li>
+                </ul>
+              </section>
+            </div>
           </section>
         </div>
       </main>

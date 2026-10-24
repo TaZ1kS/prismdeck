@@ -72,6 +72,16 @@ const ui = {
   customDataDir: $("#custom-data-dir"),
   customExe: $("#custom-exe"),
   customApply: $("#custom-apply"),
+  settingsPanel: $("#settings-panel"),
+  settingsTheme: $("#settings-theme"),
+  settingsWrapper: $("#settings-wrapper"),
+  settingsOffline: $("#settings-offline"),
+  settingsShowWindow: $("#settings-show-window"),
+  settingsInstall: $("#settings-install"),
+  settingsDetect: $("#settings-detect"),
+  settingsVersion: $("#settings-version"),
+  settingsPlatform: $("#settings-platform"),
+  settingsThemeLabel: $("#settings-theme-label"),
   content: $('[data-region="content"]'),
 };
 
@@ -187,6 +197,24 @@ function versionLine(instance) {
 
 function groupLabel(group) {
   return group === "" ? "Ungrouped" : group;
+}
+
+function loaderSlug(loader) {
+  if (!loader) return "vanilla";
+  const value = loader.toLowerCase();
+  if (value.includes("fabric")) return "fabric";
+  if (value.includes("neoforge")) return "neoforge";
+  if (value.includes("forge")) return "forge";
+  if (value.includes("quilt")) return "quilt";
+  return "unknown";
+}
+
+function slugify(value) {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "ungrouped";
 }
 
 // ── Data loading ───────────────────────────────────────────────
@@ -522,6 +550,15 @@ function createCard(instance) {
   card.type = "button";
   card.className = "instance-card";
   card.dataset.instanceId = instance.id;
+  card.dataset.loader = loaderSlug(instance.loader);
+  card.dataset.group = slugify(instance.group);
+  card.dataset.managed = instance.managed_pack ? "true" : "false";
+  card.dataset.pack = instance.managed_pack?.kind || "";
+  card.dataset.mc = instance.mc_version || "";
+  card.dataset.broken =
+    !instance.mc_version && !instance.loader && !instance.managed_pack
+      ? "true"
+      : "false";
   card.setAttribute("aria-label", `Open details for ${instance.name}`);
   card.addEventListener("click", () => openInstance(instance.id));
 
@@ -677,23 +714,64 @@ function render() {
     !state.loading && !showError && !hasSnapshot && state.view === "instances";
   const showDeck = !showError && hasSnapshot && state.view === "instances";
   const showThemes = !state.loading && !showError && state.view === "themes";
+  const showSettings = !state.loading && !showError && state.view === "settings";
 
   ui.loading.hidden = !showLoading;
   ui.errorPanel.hidden = !showError;
   ui.onboarding.hidden = !showOnboarding;
   ui.dashboard.hidden = !showDeck;
   ui.themesPanel.hidden = !showThemes;
+  ui.settingsPanel.hidden = !showSettings;
 
   renderSources();
   renderStatus();
   renderNav();
+  syncChrome();
 
   if (showError) renderError();
   if (showOnboarding) renderOnboarding();
   if (showDeck) renderDeck();
   if (showThemes) renderThemes();
+  if (showSettings) renderSettings();
 
   ui.app.dataset.ready = "true";
+}
+
+/**
+ * Reflect app state onto #app as data-* attributes, so themes can style by
+ * view, platform, install kind or running state without any JS.
+ */
+function syncChrome() {
+  const app = ui.app;
+  app.dataset.view = state.view;
+  app.dataset.theme = state.activeTheme || "";
+  app.dataset.platform = state.appInfo?.platform || "";
+  const install = state.snapshot?.install ?? null;
+  app.dataset.installKind = install ? install.kind : "none";
+  app.dataset.hasInstall = install ? "true" : "false";
+  const running =
+    state.currentRun &&
+    (state.currentRun.status === "running" || state.currentRun.status === "stopping");
+  app.dataset.running = running ? "true" : "false";
+}
+
+function renderSettings() {
+  const select = ui.settingsTheme;
+  select.replaceChildren();
+  for (const theme of state.themes) {
+    select.append(new Option(theme.name, theme.id));
+  }
+  if (state.activeTheme) select.value = state.activeTheme;
+
+  const install = state.snapshot?.install ?? null;
+  ui.settingsInstall.textContent = install
+    ? `${install.label} — ${install.data_dir}`
+    : "No source selected.";
+
+  ui.settingsVersion.textContent = state.appInfo ? state.appInfo.version : "0.1.0";
+  ui.settingsPlatform.textContent = state.appInfo
+    ? `${state.appInfo.platform}/${state.appInfo.arch}`
+    : "—";
 }
 
 // ── Actions ────────────────────────────────────────────────────
@@ -779,7 +857,7 @@ function clearFilters() {
 
 // ── Themes ─────────────────────────────────────────────────────
 
-const THEME_STYLE_ID = "pd-theme-live";
+const THEME_LINK_ID = "pd-theme-live";
 
 function renderNav() {
   for (const item of document.querySelectorAll(".nav__item")) {
@@ -789,18 +867,27 @@ function renderNav() {
   }
 }
 
-function setThemeCss(css) {
-  let style = document.getElementById(THEME_STYLE_ID);
-  if (!css) {
-    if (style) style.remove();
+/**
+ * Apply a theme by swapping a <link rel="stylesheet">. Using a link (rather
+ * than an inline <style>) means relative url() and @font-face inside a theme
+ * resolve against the theme's own folder, so a theme can ship its own fonts
+ * and background images.
+ */
+function setThemeLink(id) {
+  let link = document.getElementById(THEME_LINK_ID);
+
+  if (id === "default") {
+    if (link) link.remove();
     return;
   }
-  if (!style) {
-    style = document.createElement("style");
-    style.id = THEME_STYLE_ID;
-    document.head.append(style);
+
+  if (!link) {
+    link = document.createElement("link");
+    link.id = THEME_LINK_ID;
+    link.rel = "stylesheet";
+    document.head.append(link);
   }
-  style.textContent = css;
+  link.href = `themes/${id}/theme.css?t=${Date.now()}`;
 }
 
 function renderThemes() {
@@ -835,12 +922,22 @@ function renderThemes() {
     const name = document.createElement("span");
     name.className = "theme-card__name";
     name.textContent = theme.name;
-    const id = document.createElement("span");
-    id.className = "theme-card__id";
-    id.textContent = theme.id;
-    meta.append(name, id);
+    const sub = document.createElement("span");
+    sub.className = "theme-card__id";
+    sub.textContent = theme.description
+      ? `${theme.id} · ${theme.description}`
+      : theme.id;
+    meta.append(name, sub);
 
     card.append(swatch, meta);
+
+    if (theme.scheme && theme.scheme !== "dark") {
+      const scheme = document.createElement("span");
+      scheme.className = "theme-card__scheme";
+      scheme.textContent = theme.scheme;
+      card.append(scheme);
+    }
+
     if (state.activeTheme === theme.id) {
       const active = document.createElement("span");
       active.className = "theme-card__active";
@@ -852,26 +949,15 @@ function renderThemes() {
   }
 }
 
-async function fetchThemeCss(id) {
-  const response = await fetch(`themes/${id}/theme.css`);
-  if (!response.ok) throw new Error(`theme ${id} returned ${response.status}`);
-  return response.text();
-}
-
 async function applyTheme(id) {
   state.activeTheme = id;
-  try {
-    const css = await fetchThemeCss(id);
-    setThemeCss(css);
-    localStorage.setItem("prismdeck.theme", id);
-    ui.themeLabel.textContent = `theme: ${id}`;
-    if (state.settings) {
-      state.settings.theme = id;
-      await persistSettings();
-    }
-  } catch (error) {
-    setThemeCss(null);
-    ui.themeNote.textContent = `Could not load theme ${id}: ${errorMessage(error)}`;
+  setThemeLink(id);
+  localStorage.setItem("prismdeck.theme", id);
+  ui.themeLabel.textContent = `theme: ${id}`;
+  ui.settingsThemeLabel.textContent = id;
+  if (state.settings) {
+    state.settings.theme = id;
+    await persistSettings();
   }
   renderThemes();
 }
@@ -891,7 +977,9 @@ async function loadThemes() {
     await applyTheme(id);
   } else {
     state.activeTheme = "default";
+    setThemeLink("default");
     ui.themeLabel.textContent = "theme: default";
+    ui.settingsThemeLabel.textContent = "default";
   }
 }
 
@@ -912,6 +1000,9 @@ async function loadSettings() {
   ui.modalWrapper.value = state.settings.wrapper || "";
   ui.modalOffline.checked = Boolean(state.settings.offline);
   ui.modalShowWindow.checked = Boolean(state.settings.showWindow);
+  ui.settingsWrapper.value = state.settings.wrapper || "";
+  ui.settingsOffline.checked = Boolean(state.settings.offline);
+  ui.settingsShowWindow.checked = Boolean(state.settings.showWindow);
 }
 
 async function persistSettings() {
@@ -927,14 +1018,10 @@ function registerThemeEvents() {
   const events = tauri?.event;
   if (!events?.listen) return;
 
-  events.listen("theme-changed", async (event) => {
+  events.listen("theme-changed", (event) => {
     const id = event.payload?.id;
     if (!id || !state.activeTheme || id !== state.activeTheme) return;
-    try {
-      setThemeCss(await fetchThemeCss(id));
-    } catch {
-      /* ignore transient partial writes */
-    }
+    setThemeLink(id);
   });
 }
 
@@ -1194,6 +1281,10 @@ ui.errorRetry.addEventListener("click", handleDetect);
 ui.demoBtn.addEventListener("click", handleDemo);
 ui.errorDemo.addEventListener("click", handleDemo);
 ui.customApply.addEventListener("click", handleCustomInstall);
+ui.settingsTheme.addEventListener("change", () => {
+  if (ui.settingsTheme.value) applyTheme(ui.settingsTheme.value);
+});
+ui.settingsDetect.addEventListener("click", handleDetect);
 ui.clearFilter.addEventListener("click", clearFilters);
 ui.emptyClear.addEventListener("click", clearFilters);
 ui.modalLaunch.addEventListener("click", launchInstance);

@@ -1,7 +1,47 @@
 [
-  { "id": "default", "name": "Default", "accent": "#ff7a45" },
-  { "id": "arcade", "name": "Arcade", "accent": "#22d3ee" },
-  { "id": "terminal", "name": "Terminal", "accent": "#4ade80" },
-  { "id": "paper", "name": "Paper", "accent": "#c2672c" },
-  { "id": "split", "name": "Split", "accent": "#ffd23f" }
+  {
+    "id": "default",
+    "name": "Default",
+    "accent": "#ff7a45",
+    "scheme": "dark",
+    "author": "PrismDeck",
+    "description": "Card grid with a left sidebar",
+    "tags": ["deck", "dark"]
+  },
+  {
+    "id": "arcade",
+    "name": "Arcade",
+    "accent": "#22d3ee",
+    "scheme": "dark",
+    "author": "PrismDeck",
+    "description": "Neon tiles, tilted, no bottom bar",
+    "tags": ["neon", "tiles"]
+  },
+  {
+    "id": "terminal",
+    "name": "Terminal",
+    "accent": "#4ade80",
+    "scheme": "dark",
+    "author": "PrismDeck",
+    "description": "Monospaced list, nav on top",
+    "tags": ["list", "mono"]
+  },
+  {
+    "id": "paper",
+    "name": "Paper",
+    "accent": "#c2672c",
+    "scheme": "light",
+    "author": "PrismDeck",
+    "description": "Light, centered, soft dividers",
+    "tags": ["light", "minimal"]
+  },
+  {
+    "id": "split",
+    "name": "Split",
+    "accent": "#ffd23f",
+    "scheme": "dark",
+    "author": "PrismDeck",
+    "description": "Dock bottom, sidebar right, wide rows",
+    "tags": ["dock", "rows"]
+  }
 ]

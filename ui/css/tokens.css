@@ -85,8 +85,23 @@
   --pd-theme-blur: 0px;
 
   /* Motion */
-  --pd-transition-fast: 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  --pd-transition-base: 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pd-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pd-dur-fast: 140ms;
+  --pd-dur-base: 240ms;
+  --pd-dur-slow: 440ms;
+  --pd-transition-fast: var(--pd-dur-fast) var(--pd-ease);
+  --pd-transition-base: var(--pd-dur-base) var(--pd-ease);
+
+  /* Effects & misc (themes may override any of these) */
+  --pd-backdrop-blur: 16px;
+  --pd-card-glow: 0 0 40px rgba(139, 92, 246, 0.18);
+  --pd-icon-filter: none;
+  --pd-noise-opacity: 0.05;
+  --pd-cursor: default;
+  --pd-selection-bg: var(--pd-accent-soft);
+  --pd-selection-fg: var(--pd-text);
+  --pd-scrollbar-thumb: rgba(148, 163, 184, 0.2);
+  --pd-scrollbar-thumb-hover: rgba(148, 163, 184, 0.35);
 
   /* Elevation */
   --pd-shadow-card: 0 18px 50px rgba(0, 0, 0, 0.28);

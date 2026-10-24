@@ -1,0 +1,12 @@
+/* ────────────────────────────────────────────────────────────────
+   Default theme — neutral deck.
+   This file is intentionally small: the base tokens already define
+   the visual language. A theme may replace any of them, re-map grid
+   areas, skew regions, or hide components entirely.
+   ──────────────────────────────────────────────────────────────── */
+
+:root {
+  --pd-accent: #ff7a45;
+  --pd-accent-2: #8b5cf6;
+  --pd-accent-3: #22d3ee;
+}

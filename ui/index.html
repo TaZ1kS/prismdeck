@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>PrismDeck</title>
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link id="pd-theme" rel="stylesheet" href="themes/default/theme.css" />
+  </head>
+  <body>
+    <div id="app" data-ready="false">
+      <header data-region="topbar" class="topbar">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">◈</div>
+          <div class="brand__text">
+            <strong>PrismDeck</strong>
+            <span>Prism Launcher shell</span>
+          </div>
+        </div>
+        <div class="topbar__spacer"></div>
+        <div class="topbar__meta" id="env-meta">booting…</div>
+      </header>
+
+      <aside data-region="sidebar" class="sidebar">
+        <nav class="nav" aria-label="Primary">
+          <button class="nav__item is-active" type="button" data-nav="instances">Instances</button>
+          <button class="nav__item" type="button" data-nav="themes">Themes</button>
+          <button class="nav__item" type="button" data-nav="settings">Settings</button>
+        </nav>
+        <div class="sidebar__note">
+          <span class="eyebrow">status</span>
+          <p id="bootstrap-note">Scaffold online. Prism discovery lands in M1.</p>
+        </div>
+      </aside>
+
+      <main data-region="content" class="content">
+        <div class="content__inner">
+          <section class="hero">
+            <span class="eyebrow">M0 · foundation</span>
+            <h1>One shell.<br />Every instance.</h1>
+            <p class="hero__copy">
+              A featherweight deck for Prism Launcher — Rust core, vanilla webview,
+              themeable to the bones.
+            </p>
+            <div class="hero__actions">
+              <button class="btn btn--primary" id="probe-btn" type="button">
+                Run environment probe
+              </button>
+              <span class="hint">calls <code>app_info</code> in Rust</span>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel__head">
+              <h2>Runtime</h2>
+              <span class="chip" id="probe-state" aria-live="polite">idle</span>
+            </div>
+            <pre class="code" id="probe-output">Waiting for probe…</pre>
+          </section>
+        </div>
+      </main>
+
+      <footer data-region="statusbar" class="statusbar">
+        <span>PrismDeck 0.1.0</span>
+        <span class="statusbar__dot" aria-hidden="true"></span>
+        <span>zero npm runtime</span>
+        <span class="statusbar__spacer"></span>
+        <span id="theme-label">theme: default</span>
+      </footer>
+    </div>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

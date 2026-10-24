@@ -1,0 +1,100 @@
+/* ────────────────────────────────────────────────────────────────
+   PrismDeck design tokens
+   A theme may override any token below — and the entire layout.
+   ──────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: dark;
+
+  /* Base surfaces */
+  --pd-bg-0: #07090f;
+  --pd-bg-1: #0b0e17;
+  --pd-bg-2: #101521;
+  --pd-surface: rgba(18, 24, 38, 0.72);
+  --pd-surface-strong: rgba(22, 29, 46, 0.92);
+  --pd-surface-soft: rgba(255, 255, 255, 0.035);
+  --pd-overlay: rgba(3, 5, 10, 0.72);
+
+  /* Lines & separation */
+  --pd-line: rgba(151, 165, 194, 0.16);
+  --pd-line-strong: rgba(166, 180, 209, 0.32);
+  --pd-line-accent: rgba(255, 122, 69, 0.42);
+
+  /* Text */
+  --pd-text: #eef1f8;
+  --pd-text-soft: #c3cbdd;
+  --pd-muted: #8792aa;
+  --pd-faint: #5b6479;
+  --pd-ink: #0a0c12;
+
+  /* Accents */
+  --pd-accent: #ff7a45;
+  --pd-accent-2: #8b5cf6;
+  --pd-accent-3: #22d3ee;
+  --pd-accent-soft: rgba(255, 122, 69, 0.12);
+  --pd-accent-2-soft: rgba(139, 92, 246, 0.14);
+  --pd-success: #4ade80;
+  --pd-warning: #fbbf24;
+  --pd-danger: #fb7185;
+
+  /* Typography */
+  --pd-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --pd-font-display: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --pd-font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, monospace;
+  --pd-text-xs: 0.72rem;
+  --pd-text-sm: 0.82rem;
+  --pd-text-md: 0.95rem;
+  --pd-text-lg: 1.15rem;
+  --pd-text-xl: clamp(2rem, 4vw, 3.6rem);
+  --pd-weight-normal: 450;
+  --pd-weight-medium: 560;
+  --pd-weight-bold: 720;
+  --pd-tracking-wide: 0.12em;
+  --pd-leading-tight: 1.08;
+  --pd-leading-normal: 1.55;
+
+  /* Spacing */
+  --pd-space-1: 4px;
+  --pd-space-2: 8px;
+  --pd-space-3: 12px;
+  --pd-space-4: 16px;
+  --pd-space-5: 24px;
+  --pd-space-6: 32px;
+  --pd-space-7: 48px;
+
+  /* Radii */
+  --pd-radius-sm: 10px;
+  --pd-radius-md: 16px;
+  --pd-radius-lg: 24px;
+  --pd-radius-pill: 999px;
+
+  /* Layout regions (themes may re-map these) */
+  --pd-topbar-h: 68px;
+  --pd-sidebar-w: 224px;
+  --pd-statusbar-h: 34px;
+  --pd-gap: 14px;
+  --pd-frame-pad: 14px;
+  --pd-content-max: 1240px;
+
+  /* Theme transforms */
+  --pd-topbar-skew: 0deg;
+  --pd-sidebar-skew: 0deg;
+  --pd-card-skew: 0deg;
+  --pd-card-rotate: 0deg;
+  --pd-card-scale: 1;
+  --pd-theme-blur: 0px;
+
+  /* Motion */
+  --pd-transition-fast: 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pd-transition-base: 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Elevation */
+  --pd-shadow-card: 0 18px 50px rgba(0, 0, 0, 0.28);
+  --pd-shadow-glow: 0 0 0 1px rgba(255, 122, 69, 0.08),
+    0 20px 70px rgba(139, 92, 246, 0.12);
+
+  /* Layers */
+  --pd-z-base: 1;
+  --pd-z-overlay: 50;
+  --pd-z-toast: 100;
+}

@@ -1,0 +1,92 @@
+/* ────────────────────────────────────────────────────────────────
+   Named layout regions.
+   Themes can re-map `grid-template-areas` and move whole regions.
+   ──────────────────────────────────────────────────────────────── */
+
+#app {
+  position: relative;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: var(--pd-sidebar-w) minmax(0, 1fr);
+  grid-template-rows: var(--pd-topbar-h) minmax(0, 1fr) var(--pd-statusbar-h);
+  grid-template-areas:
+    "topbar topbar"
+    "sidebar content"
+    "statusbar statusbar";
+  gap: var(--pd-gap);
+  padding: var(--pd-frame-pad);
+  isolation: isolate;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+#app[data-ready="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+#app::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+
+[data-region="topbar"] {
+  grid-area: topbar;
+  min-width: 0;
+}
+
+[data-region="sidebar"] {
+  grid-area: sidebar;
+  min-height: 0;
+}
+
+[data-region="content"] {
+  grid-area: content;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
+  scrollbar-gutter: stable;
+}
+
+[data-region="statusbar"] {
+  grid-area: statusbar;
+  min-width: 0;
+}
+
+.content__inner {
+  width: min(100%, var(--pd-content-max));
+  margin: 0 auto;
+  display: grid;
+  gap: var(--pd-space-5);
+  padding-bottom: var(--pd-space-6);
+}
+
+@media (max-width: 900px) {
+  #app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--pd-topbar-h) auto minmax(0, 1fr) var(--pd-statusbar-h);
+    grid-template-areas:
+      "topbar"
+      "sidebar"
+      "content"
+      "statusbar";
+  }
+
+  [data-region="sidebar"] {
+    min-height: auto;
+  }
+
+  .sidebar__note {
+    display: none;
+  }
+}

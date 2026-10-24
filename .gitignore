@@ -1,0 +1,44 @@
+# ─── Rust / Tauri ───────────────────────────────────────────────
+/target/
+/src-tauri/target/
+/src-tauri/gen/
+**/*.rs.bk
+
+# ─── Node / frontend tooling (dev only) ─────────────────────────
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# ─── OS junk ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Editors ────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ─── Local env / secrets ────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.token
+
+# ─── Runtime logs / local data ──────────────────────────────────
+*.log
+/tmp/
+/.cache/
+
+# ─── Build artifacts ────────────────────────────────────────────
+*.AppImage
+*.deb
+*.rpm
+*.msi
+*.exe
+*.dmg

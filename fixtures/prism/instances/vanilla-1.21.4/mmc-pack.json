@@ -1,0 +1,6 @@
+{
+  "formatVersion": 1,
+  "components": [
+    { "uid": "net.minecraft", "version": "1.21.4", "cachedName": "Minecraft", "important": true }
+  ]
+}

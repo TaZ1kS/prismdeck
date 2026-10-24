@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "groups": {
+    "Modded": {
+      "hidden": false,
+      "instances": ["fabric-1.20.1", "atm10", "quilt-1.20.4", "forge-1.19.2"]
+    },
+    "Vanilla": {
+      "hidden": false,
+      "instances": ["vanilla-1.21.4"]
+    }
+  },
+  "ungrouped": {
+    "hidden": false
+  }
+}

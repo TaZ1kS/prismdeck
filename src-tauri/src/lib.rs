@@ -1,30 +1,21 @@
-use serde::Serialize;
-
-#[derive(Serialize)]
-struct AppInfo {
-    name: &'static str,
-    version: &'static str,
-    platform: &'static str,
-    arch: &'static str,
-    debug: bool,
-}
-
-#[tauri::command]
-fn app_info() -> AppInfo {
-    AppInfo {
-        name: "PrismDeck",
-        version: env!("CARGO_PKG_VERSION"),
-        platform: std::env::consts::OS,
-        arch: std::env::consts::ARCH,
-        debug: cfg!(debug_assertions),
-    }
-}
+mod commands;
+mod prism;
+mod state;
 
 pub fn run() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![app_info])
+        .manage(state::AppState::default())
+        .invoke_handler(tauri::generate_handler![
+            commands::app_info,
+            commands::detect_prism,
+            commands::set_prism_install,
+            commands::refresh_instances,
+            commands::list_instances,
+            commands::load_demo_data,
+            commands::get_instance_icon,
+        ])
         .run(tauri::generate_context!())
         .expect("failed to run PrismDeck");
 }

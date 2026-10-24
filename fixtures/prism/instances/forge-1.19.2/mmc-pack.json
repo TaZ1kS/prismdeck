@@ -1,0 +1,7 @@
+{
+  "formatVersion": 1,
+  "components": [
+    { "uid": "net.minecraft", "version": "1.19.2", "cachedName": "Minecraft", "important": true },
+    { "uid": "net.minecraftforge", "version": "43.4.0", "cachedName": "Forge" }
+  ]
+}

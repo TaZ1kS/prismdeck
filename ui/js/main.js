@@ -1088,6 +1088,9 @@ async function applyTheme(id) {
   state.activeTheme = id;
   setThemeLink(id);
   await loadThemeExtension(id);
+  // mount() only appends the theme's chrome; let onRender() sync it with the
+  // current view immediately (e.g. Prism hides its deck chrome off-instances).
+  runThemeRender();
   localStorage.setItem("prismdeck.theme", id);
   ui.themeLabel.textContent = `theme: ${id}`;
   ui.settingsThemeLabel.textContent = id;

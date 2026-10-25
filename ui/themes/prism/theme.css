@@ -80,6 +80,9 @@ body {
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+
+#app[data-view="instances"] .topbar {
   height: 44px;
   padding: 0 8px;
   gap: 6px;
@@ -102,6 +105,9 @@ body {
   border: 0;
   border-top: 1px solid var(--pd-line);
   background: var(--pd-bg-0);
+}
+
+#app[data-view="instances"] .statusbar {
   height: var(--pd-statusbar-h);
   padding: 0;
   gap: 0;
@@ -485,4 +491,125 @@ body {
 /* the base warning banner doesn't fit the Prism look */
 .warnings {
   display: none;
+}
+
+/* ── Side menu (left nav) ─────────────────────────────────────── */
+
+.nav__item {
+  border-radius: 4px;
+  padding: 8px 10px;
+  gap: 10px;
+  color: var(--pd-text-soft);
+  font-weight: 500;
+}
+
+.nav__item::before {
+  width: 6px;
+  height: 6px;
+  background: var(--pd-muted);
+  box-shadow: none;
+}
+
+.nav__item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--pd-line);
+}
+
+.nav__item.is-active {
+  background: rgba(114, 137, 218, 0.18);
+  border-color: transparent;
+  color: var(--pd-text);
+}
+
+.nav__item.is-active::before {
+  background: var(--pd-accent);
+  box-shadow: none;
+}
+
+.group-item {
+  border-radius: 4px;
+}
+
+.group-item.is-active {
+  background: rgba(114, 137, 218, 0.14);
+  border-color: transparent;
+}
+
+.group-item.is-active .group-item__dot {
+  background: var(--pd-accent);
+  box-shadow: none;
+}
+
+.source-card {
+  border-radius: 6px;
+  border-style: solid;
+  border-color: var(--pd-line);
+}
+
+/* ── Settings view ────────────────────────────────────────────── */
+
+.settings__head h1,
+.themes__head h1 {
+  background: none;
+  color: var(--pd-text);
+  -webkit-text-fill-color: var(--pd-text);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.settings-section {
+  border-radius: 6px;
+  border-color: var(--pd-line);
+  background: var(--pd-surface-soft);
+}
+
+.settings-section h2 {
+  color: var(--pd-text);
+}
+
+.settings-list li {
+  border-radius: 4px;
+  background: var(--pd-surface-soft);
+  border-color: var(--pd-line);
+}
+
+.input,
+.select {
+  border-radius: 4px;
+  border-color: var(--pd-line);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--pd-accent);
+}
+
+.check {
+  color: var(--pd-text-soft);
+}
+
+.settings-skin__preview {
+  border-radius: 10px;
+}
+
+/* ── Themes view ──────────────────────────────────────────────── */
+
+.theme-card {
+  border-radius: 6px;
+  border-color: var(--pd-line);
+  background: var(--pd-surface-soft);
+}
+
+.theme-card:hover {
+  border-color: var(--pd-line-strong);
+}
+
+.theme-card.is-active {
+  border-color: var(--pd-accent);
+  box-shadow: none;
+}
+
+.theme-card__swatch {
+  border-radius: 6px;
 }

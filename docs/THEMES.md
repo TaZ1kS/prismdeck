@@ -44,6 +44,37 @@ The context (`ctx`) exposes:
 regions (topbar/sidebar/statusbar/content shell); the instance grid is
 re-rendered by the app, so theme it with CSS + `data-*` hooks instead.
 
+`onRender(ctx)` runs after **every** render, on every view. Use
+`ctx.state.view` (`instances` / `themes` / `settings`) to transform only the
+view you care about. `mount` is the right place for chrome that should exist
+for the whole session; `onRender` is the right place for DOM that must follow
+re-rendered content.
+
+## Styling every view (not just Instances)
+
+A theme stylesheet loads last, so it can override *any* part of the app, not
+only the instance deck. The stable surface map:
+
+| area | selectors |
+| -- | -- |
+| shell | `#app`, `.topbar`, `.sidebar`, `.content`, `.statusbar` |
+| side menu | `.nav`, `.nav__item[data-nav]`, `.nav__item.is-active`, `.group-item`, `.group-item__dot`, `.source-card` |
+| Settings | `.settings`, `.settings__head`, `.settings__grid`, `.settings-section`, `.settings-section__row`, `.settings-list`, `.field`, `.field__label`, `.input`, `.input-range`, `.select`, `.check`, `.settings-skin`, `.settings-skin__preview` |
+| Themes | `.themes`, `.themes__head`, `.theme-list`, `.theme-card`, `.theme-card__swatch`, `.theme-card__meta`, `.theme-card.is-active` |
+| Instances | `.deck-head`, `.deck-toolbar`, `.instance-grid`, `.instance-card` |
+
+Example — restyle the side menu and the Settings cards from a theme:
+
+```css
+.nav__item { border-radius: 4px; }
+.nav__item.is-active { background: var(--pd-accent-soft); border-color: transparent; }
+.settings-section { border-radius: 6px; background: var(--pd-surface-soft); }
+.theme-card { border-radius: 6px; }
+```
+
+The bundled `prism` theme uses this to style all three views consistently;
+`showcase` removes a nav item and injects its own buttons.
+
 ## How themes are loaded
 
 - `ui/themes/manifest.json` lists the available themes (id, name, accent,
@@ -166,6 +197,8 @@ body { background-image: url("bg.png"); }
 | `terminal` | monospaced list, nav across the top |
 | `paper` | light, centered, soft-divided list |
 | `split` | dock on the bottom, sidebar right, wide rows |
+| `prism` | 1:1 Prism Launcher layout: toolbar, grouped tiles, right action panel |
+| `translucent` | frosted glass panels over a colorful gradient |
 | `showcase` | exercises every lever: hooks, transforms, fonts, texture, animations |
 
 ## Adding a theme

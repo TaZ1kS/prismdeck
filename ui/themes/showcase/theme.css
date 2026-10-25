@@ -1,0 +1,292 @@
+/* ════════════════════════════════════════════════════════════════════
+   Showcase — exercises every PrismDeck theming lever at once.
+
+   This file demonstrates:
+   • design tokens (colors, fonts, radii, motion, effects, transforms)
+   • layout re-mapping (statusbar top, sidebar right, dock bottom)
+   • data-* state hooks (#app and .instance-card)
+   • per-loader / per-pack / broken card styling
+   • hiding elements
+   • @font-face (local) + a bundled background texture via url()
+   • custom @keyframes (glow pulse, title shimmer, icon float)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Custom font via @font-face (drop a .woff2 next to this file to ship
+      your own; here we alias local monospace families) ─────────────── */
+@font-face {
+  font-family: "Showcase Mono";
+  src: local("JetBrains Mono"), local("Fira Code"), local("DejaVu Sans Mono"),
+    local("Cascadia Code"), local("monospace");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ── Design tokens ─────────────────────────────────────────────────── */
+:root {
+  color-scheme: dark;
+
+  --pd-accent: #ff3d81;
+  --pd-accent-2: #7c4dff;
+  --pd-accent-3: #00e5a0;
+  --pd-accent-soft: rgba(255, 61, 129, 0.18);
+  --pd-accent-2-soft: rgba(124, 77, 255, 0.2);
+
+  --pd-bg-0: #0a0710;
+  --pd-bg-1: #120c1c;
+  --pd-bg-2: #1a1228;
+  --pd-surface: rgba(26, 18, 40, 0.82);
+  --pd-surface-strong: rgba(32, 22, 48, 0.95);
+  --pd-surface-soft: rgba(255, 255, 255, 0.04);
+
+  --pd-line: rgba(255, 61, 129, 0.16);
+  --pd-line-strong: rgba(255, 61, 129, 0.32);
+  --pd-line-accent: rgba(255, 61, 129, 0.55);
+
+  --pd-text: #f5ecff;
+  --pd-text-soft: #d6c5ec;
+  --pd-muted: #9d86bd;
+  --pd-faint: #5f4d7a;
+
+  --pd-font-sans: "Showcase Mono", "Segoe UI", system-ui, sans-serif;
+  --pd-font-mono: "Showcase Mono", ui-monospace, monospace;
+
+  --pd-radius-sm: 6px;
+  --pd-radius-md: 18px;
+  --pd-radius-lg: 26px;
+
+  --pd-topbar-h: 64px;
+  --pd-sidebar-w: 240px;
+
+  /* transforms */
+  --pd-topbar-skew: -1deg;
+  --pd-sidebar-skew: 1deg;
+  --pd-card-skew: -1.4deg;
+  --pd-card-rotate: 0.8deg;
+  --pd-card-scale: 1;
+
+  /* motion */
+  --pd-dur-base: 300ms;
+  --pd-dur-slow: 520ms;
+  --pd-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* effects */
+  --pd-backdrop-blur: 12px;
+  --pd-icon-filter: saturate(1.6) contrast(1.08);
+  --pd-selection-bg: rgba(255, 61, 129, 0.4);
+  --pd-selection-fg: #ffffff;
+  --pd-scrollbar-thumb: rgba(255, 61, 129, 0.4);
+  --pd-scrollbar-thumb-hover: rgba(255, 61, 129, 0.65);
+  --pd-noise-opacity: 0.06;
+}
+
+/* ── Bundled background texture via url() ──────────────────────────── */
+body {
+  background:
+    radial-gradient(900px 600px at 85% -10%, rgba(124, 77, 255, 0.28), transparent 60%),
+    radial-gradient(800px 600px at -5% 105%, rgba(255, 61, 129, 0.24), transparent 55%),
+    url("texture.png"),
+    linear-gradient(160deg, #0a0710, #120c1c 50%, #0a0710);
+}
+
+/* grain overlay re-uses the texture and the noise token */
+#app::before {
+  background-image: url("texture.png");
+  background-size: 160px 160px;
+  opacity: var(--pd-noise-opacity);
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* ── Layout re-mapping: statusbar top, sidebar right, dock bottom ──── */
+#app {
+  grid-template-columns: minmax(0, 1fr) var(--pd-sidebar-w);
+  grid-template-rows: var(--pd-statusbar-h) minmax(0, 1fr) var(--pd-topbar-h);
+  grid-template-areas:
+    "statusbar statusbar"
+    "content sidebar"
+    "topbar topbar";
+}
+
+/* ── State hooks on #app ───────────────────────────────────────────── */
+
+/* while a launch is running, the dock pulses */
+#app[data-running="true"] .topbar {
+  border-color: var(--pd-accent);
+  animation: showcase-glow 1.6s ease-in-out infinite;
+}
+
+/* no install: the top statusbar turns red */
+#app[data-has-install="false"] .statusbar {
+  border-color: var(--pd-danger);
+  color: var(--pd-danger);
+}
+
+/* per-view accent shift */
+#app[data-view="themes"] .content__inner,
+#app[data-view="settings"] .content__inner {
+  box-shadow: inset 0 0 0 1px rgba(0, 229, 160, 0.12);
+  border-radius: var(--pd-radius-lg);
+}
+
+/* platform Easter egg */
+#app[data-platform="linux"] .brand__mark {
+  transform: rotate(-8deg);
+}
+#app[data-platform="windows"] .brand__mark {
+  transform: rotate(8deg);
+}
+
+/* ── Topbar (dock) ─────────────────────────────────────────────────── */
+.topbar {
+  border-radius: var(--pd-radius-pill);
+  border-color: rgba(255, 61, 129, 0.35);
+  background: linear-gradient(120deg, rgba(255, 61, 129, 0.14), rgba(124, 77, 255, 0.14)),
+    var(--pd-surface);
+}
+
+.brand__mark {
+  background: linear-gradient(135deg, var(--pd-accent), var(--pd-accent-2) 55%, var(--pd-accent-3));
+  box-shadow: 0 8px 28px rgba(255, 61, 129, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* hide the brand subtitle to show the hiding lever */
+.brand__text span {
+  display: none;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────────── */
+.sidebar {
+  border-radius: var(--pd-radius-md);
+  background: linear-gradient(180deg, rgba(124, 77, 255, 0.12), transparent 60%),
+    var(--pd-surface);
+}
+
+.nav__item.is-active {
+  background: linear-gradient(120deg, var(--pd-accent-soft), var(--pd-accent-2-soft));
+}
+
+/* ── Deck head: shimmering gradient title ──────────────────────────── */
+.deck-head__copy h1,
+.themes__head h1,
+.settings__head h1 {
+  background: linear-gradient(110deg, var(--pd-accent), var(--pd-accent-2) 40%, var(--pd-accent-3) 70%, var(--pd-accent));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: showcase-shimmer 6s linear infinite;
+}
+
+/* ── Cards: pulse glow + per-loader / per-pack / broken styling ────── */
+.instance-grid {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.instance-card {
+  padding: 20px;
+  border: 1px solid var(--pd-line);
+  background: linear-gradient(160deg, rgba(255, 61, 129, 0.1), transparent 45%),
+    var(--pd-surface);
+  animation: showcase-pulse 3.4s ease-in-out infinite;
+}
+
+.instance-card:hover {
+  animation-play-state: paused;
+  --pd-card-lift: -6px;
+  border-color: var(--pd-accent);
+  box-shadow: 0 0 0 1px rgba(255, 61, 129, 0.25), var(--pd-card-glow);
+}
+
+.instance-icon {
+  border-radius: 14px;
+  animation: showcase-icon-float 4s ease-in-out infinite;
+}
+
+/* hide the version line on cards (hiding lever) */
+.instance-card__sub {
+  display: none;
+}
+
+/* loader-colored cards */
+.instance-card[data-loader="fabric"] {
+  border-color: rgba(124, 77, 255, 0.55);
+}
+.instance-card[data-loader="fabric"] .instance-icon {
+  box-shadow: 0 0 20px rgba(124, 77, 255, 0.5);
+}
+.instance-card[data-loader="neoforge"] {
+  border-color: rgba(255, 122, 69, 0.55);
+}
+.instance-card[data-loader="forge"] {
+  border-color: rgba(80, 150, 255, 0.5);
+}
+.instance-card[data-loader="quilt"] {
+  border-color: rgba(0, 229, 160, 0.5);
+}
+.instance-card[data-loader="vanilla"] {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* broken instance: dashed red */
+.instance-card[data-broken="true"] {
+  border-style: dashed;
+  border-color: var(--pd-danger);
+  opacity: 0.85;
+}
+
+/* managed-pack cards get a tinted badge */
+.instance-card[data-managed="true"] .badge--pack {
+  border-color: var(--pd-line-accent);
+  background: var(--pd-accent-soft);
+  color: var(--pd-accent-3);
+}
+
+/* ── Custom keyframes ──────────────────────────────────────────────── */
+@keyframes showcase-pulse {
+  0%,
+  100% {
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35), 0 0 0 rgba(255, 61, 129, 0);
+  }
+  50% {
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35), 0 0 28px rgba(255, 61, 129, 0.28);
+  }
+}
+
+@keyframes showcase-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 24px rgba(255, 61, 129, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 46px rgba(255, 61, 129, 0.7);
+  }
+}
+
+@keyframes showcase-shimmer {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+@keyframes showcase-icon-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .instance-card,
+  .topbar,
+  .instance-icon,
+  .deck-head__copy h1,
+  .themes__head h1,
+  .settings__head h1 {
+    animation: none !important;
+  }
+}

@@ -43,5 +43,14 @@
     "author": "PrismDeck",
     "description": "Dock bottom, sidebar right, wide rows",
     "tags": ["dock", "rows"]
+  },
+  {
+    "id": "showcase",
+    "name": "Showcase",
+    "accent": "#ff3d81",
+    "scheme": "dark",
+    "author": "PrismDeck",
+    "description": "Exercises every customization feature",
+    "tags": ["lab", "hooks", "fonts"]
   }
 ]

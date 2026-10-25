@@ -128,6 +128,7 @@ body { background-image: url("bg.png"); }
 | `terminal` | monospaced list, nav across the top |
 | `paper` | light, centered, soft-divided list |
 | `split` | dock on the bottom, sidebar right, wide rows |
+| `showcase` | exercises every lever: hooks, transforms, fonts, texture, animations |
 
 ## Adding a theme
 

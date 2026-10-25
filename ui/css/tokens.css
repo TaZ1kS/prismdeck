@@ -10,8 +10,12 @@
   --pd-bg-0: #07090f;
   --pd-bg-1: #0b0e17;
   --pd-bg-2: #101521;
-  --pd-surface: rgba(18, 24, 38, 0.72);
-  --pd-surface-strong: rgba(22, 29, 46, 0.92);
+  --pd-surface-rgb: 18 24 38;
+  --pd-surface-alpha: 0.72;
+  --pd-surface-strong-rgb: 22 29 46;
+  --pd-surface-strong-alpha: 0.92;
+  --pd-surface: rgb(var(--pd-surface-rgb) / var(--pd-surface-alpha));
+  --pd-surface-strong: rgb(var(--pd-surface-strong-rgb) / var(--pd-surface-strong-alpha));
   --pd-surface-soft: rgba(255, 255, 255, 0.035);
   --pd-overlay: rgba(3, 5, 10, 0.72);
 

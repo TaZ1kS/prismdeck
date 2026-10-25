@@ -1,0 +1,57 @@
+/* Translucent — glassmorphism: frosted, semi-transparent panels over a
+   colorful background. Surfaces are set directly (not via the alpha tokens)
+   so the global transparency slider in Settings doesn't override this look. */
+
+:root {
+  color-scheme: dark;
+
+  --pd-accent: #7c5cff;
+  --pd-accent-2: #4cc9f0;
+  --pd-accent-3: #f472b6;
+  --pd-accent-soft: rgba(124, 92, 255, 0.22);
+  --pd-accent-2-soft: rgba(76, 201, 240, 0.18);
+
+  --pd-bg-0: #1b1b2a;
+  --pd-bg-1: #23233a;
+  --pd-bg-2: #2b2b46;
+
+  --pd-surface: rgb(255 255 255 / 0.12);
+  --pd-surface-strong: rgb(32 32 54 / 0.55);
+  --pd-surface-soft: rgba(255, 255, 255, 0.08);
+
+  --pd-line: rgba(255, 255, 255, 0.16);
+  --pd-line-strong: rgba(255, 255, 255, 0.26);
+  --pd-line-accent: rgba(124, 92, 255, 0.55);
+
+  --pd-text: #f4f2ff;
+  --pd-text-soft: #dcd6f5;
+  --pd-muted: #a99fd0;
+  --pd-faint: #7b74a3;
+
+  --pd-backdrop-blur: 22px;
+  --pd-icon-filter: none;
+
+  --pd-radius-md: 16px;
+  --pd-radius-lg: 20px;
+
+  --pd-card-skew: 0deg;
+  --pd-card-rotate: 0deg;
+  --pd-card-scale: 1;
+}
+
+body {
+  background:
+    radial-gradient(1000px 700px at 15% -10%, rgba(124, 92, 255, 0.55), transparent 55%),
+    radial-gradient(900px 700px at 110% 110%, rgba(244, 114, 182, 0.45), transparent 55%),
+    radial-gradient(700px 500px at 50% 50%, rgba(76, 201, 240, 0.35), transparent 60%),
+    linear-gradient(160deg, #1b1b2a, #23233a 55%, #1b1b2a);
+}
+
+/* cards read as frosted glass */
+.instance-card {
+  background: var(--pd-surface);
+  -webkit-backdrop-filter: blur(var(--pd-backdrop-blur));
+  backdrop-filter: blur(var(--pd-backdrop-blur));
+}
+
+/* keep the topbar/sidebar/statusbar frosted (base already blurs them) */

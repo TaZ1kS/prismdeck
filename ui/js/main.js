@@ -82,6 +82,9 @@ const ui = {
   settingsVersion: $("#settings-version"),
   settingsPlatform: $("#settings-platform"),
   settingsThemeLabel: $("#settings-theme-label"),
+  settingsTransparency: $("#settings-transparency"),
+  settingsTransparencyValue: $("#settings-transparency-value"),
+  settingsSkinChange: $("#settings-skin-change"),
   content: $('[data-region="content"]'),
 };
 
@@ -1103,6 +1106,7 @@ const FALLBACK_THEMES = [
   { id: "split", name: "Split", accent: "#ffd23f", scheme: "dark", description: "Dock bottom, sidebar right, wide rows" },
   { id: "showcase", name: "Showcase", accent: "#ff3d81", scheme: "dark", description: "Exercises every customization feature" },
   { id: "prism", name: "Prism", accent: "#4caf50", scheme: "dark", description: "Mimics Prism Launcher's dark UI" },
+  { id: "translucent", name: "Translucent", accent: "#7c5cff", scheme: "dark", description: "Frosted glass over a colorful background" },
 ];
 
 async function loadThemes() {
@@ -1138,6 +1142,8 @@ async function loadSettings() {
       showWindow: false,
       server: null,
       world: null,
+      skin: null,
+      transparency: null,
     };
   }
 
@@ -1147,6 +1153,19 @@ async function loadSettings() {
   ui.settingsWrapper.value = state.settings.wrapper || "";
   ui.settingsOffline.checked = Boolean(state.settings.offline);
   ui.settingsShowWindow.checked = Boolean(state.settings.showWindow);
+
+  const transparency = state.settings.transparency ?? 1;
+  ui.settingsTransparency.value = String(transparency);
+  applyTransparency(transparency);
+}
+
+function applyTransparency(value) {
+  const t = Math.min(1, Math.max(0.3, Number(value) || 1));
+  document.documentElement.style.setProperty("--pd-surface-alpha", String(0.72 * t));
+  document.documentElement.style.setProperty("--pd-surface-strong-alpha", String(0.92 * t));
+  if (ui.settingsTransparencyValue) {
+    ui.settingsTransparencyValue.textContent = `${Math.round(t * 100)}%`;
+  }
 }
 
 async function persistSettings() {
@@ -1430,6 +1449,27 @@ ui.settingsTheme.addEventListener("change", () => {
   if (ui.settingsTheme.value) applyTheme(ui.settingsTheme.value);
 });
 ui.settingsDetect.addEventListener("click", handleDetect);
+ui.settingsWrapper.addEventListener("input", () => {
+  state.settings.wrapper = ui.settingsWrapper.value.trim() || null;
+  ui.modalWrapper.value = ui.settingsWrapper.value;
+  persistSettings();
+});
+ui.settingsOffline.addEventListener("change", () => {
+  state.settings.offline = ui.settingsOffline.checked;
+  ui.modalOffline.checked = ui.settingsOffline.checked;
+  persistSettings();
+});
+ui.settingsShowWindow.addEventListener("change", () => {
+  state.settings.showWindow = ui.settingsShowWindow.checked;
+  ui.modalShowWindow.checked = ui.settingsShowWindow.checked;
+  persistSettings();
+});
+ui.settingsTransparency.addEventListener("input", () => {
+  const value = Number(ui.settingsTransparency.value);
+  applyTransparency(value);
+  state.settings.transparency = value;
+  persistSettings();
+});
 ui.clearFilter.addEventListener("click", clearFilters);
 ui.emptyClear.addEventListener("click", clearFilters);
 ui.modalLaunch.addEventListener("click", launchInstance);

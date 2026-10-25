@@ -19,6 +19,10 @@ pub struct Settings {
     pub show_window: bool,
     pub server: Option<String>,
     pub world: Option<String>,
+    /// Skin scaffold (no real behaviour yet).
+    pub skin: Option<String>,
+    /// Surface transparency, 0.3..=1.0 (1.0 = opaque). None = default.
+    pub transparency: Option<f64>,
 }
 
 fn config_dir(app: &AppHandle) -> Result<PathBuf, String> {

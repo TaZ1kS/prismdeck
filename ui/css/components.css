@@ -1651,3 +1651,38 @@
   letter-spacing: 0.08em;
   color: var(--pd-muted);
 }
+
+.input-range {
+  width: 100%;
+  height: 6px;
+  accent-color: var(--pd-accent);
+  cursor: pointer;
+}
+
+.settings-skin {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.settings-skin__preview {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 auto;
+  border: 1px solid var(--pd-line);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, var(--pd-accent-soft), var(--pd-accent-2-soft));
+  font-size: 1.6rem;
+}
+
+.settings-skin__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--pd-font-mono);
+  font-size: 11px;
+  color: var(--pd-muted);
+}

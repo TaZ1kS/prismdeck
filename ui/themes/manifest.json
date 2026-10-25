@@ -61,5 +61,14 @@
     "author": "PrismDeck",
     "description": "Mimics Prism Launcher's dark UI",
     "tags": ["prism", "list", "dark"]
+  },
+  {
+    "id": "translucent",
+    "name": "Translucent",
+    "accent": "#7c5cff",
+    "scheme": "dark",
+    "author": "PrismDeck",
+    "description": "Frosted glass over a colorful background",
+    "tags": ["glass", "blur", "dark"]
   }
 ]

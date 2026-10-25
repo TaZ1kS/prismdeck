@@ -252,9 +252,37 @@
                   <span class="field__label">Theme</span>
                   <select id="settings-theme" class="select"></select>
                 </label>
+                <label class="field">
+                  <span class="field__label">
+                    Transparency <code id="settings-transparency-value">100%</code>
+                  </span>
+                  <input
+                    id="settings-transparency"
+                    class="input-range"
+                    type="range"
+                    min="0.3"
+                    max="1"
+                    step="0.05"
+                    value="1"
+                  />
+                </label>
                 <div class="settings-section__hint">
-                  Themes are single CSS files. Browse more in the Themes tab.
+                  Makes panels translucent. Try the Translucent theme for full glass.
                 </div>
+              </section>
+
+              <section class="settings-section">
+                <h2>Skin</h2>
+                <div class="settings-skin">
+                  <div class="settings-skin__preview" aria-hidden="true">👤</div>
+                  <div class="settings-skin__info">
+                    <span>Minecraft skin</span>
+                    <button id="settings-skin-change" class="btn btn--ghost btn--small" type="button" disabled>
+                      Change skin
+                    </button>
+                  </div>
+                </div>
+                <div class="settings-section__hint">Coming soon — scaffold only.</div>
               </section>
 
               <section class="settings-section">
@@ -266,20 +294,20 @@
                     class="input"
                     type="text"
                     placeholder="gamescope -f --"
-                    disabled
+                    autocomplete="off"
+                    spellcheck="false"
                   />
                 </label>
                 <div class="settings-section__row">
                   <label class="check">
-                    <input id="settings-offline" type="checkbox" disabled />
+                    <input id="settings-offline" type="checkbox" />
                     <span>Offline mode</span>
                   </label>
                   <label class="check">
-                    <input id="settings-show-window" type="checkbox" disabled />
+                    <input id="settings-show-window" type="checkbox" />
                     <span>Show Prism window</span>
                   </label>
                 </div>
-                <div class="settings-section__hint">Coming soon.</div>
               </section>
 
               <section class="settings-section">

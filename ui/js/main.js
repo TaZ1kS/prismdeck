@@ -735,6 +735,8 @@ function render() {
   if (showThemes) renderThemes();
   if (showSettings) renderSettings();
 
+  runThemeRender();
+
   ui.app.dataset.ready = "true";
 }
 
@@ -923,6 +925,7 @@ function makeThemeContext() {
   const cleanups = [];
   return {
     root: ui.app,
+    state,
     regions: {
       topbar: document.querySelector('[data-region="topbar"]'),
       sidebar: document.querySelector('[data-region="sidebar"]'),
@@ -1005,6 +1008,18 @@ function loadThemeExtension(id) {
     script.onerror = () => resolve();
     document.head.append(script);
   });
+}
+
+/** Re-run the active theme's onRender hook after the app re-renders, so a
+    theme can transform the dynamic instance grid (grouping, reordering). */
+function runThemeRender() {
+  const extension = state.themeExtension;
+  if (!extension?.hook?.onRender) return;
+  try {
+    extension.hook.onRender(extension.ctx);
+  } catch (error) {
+    console.error("theme onRender failed", error);
+  }
 }
 
 function renderThemes() {

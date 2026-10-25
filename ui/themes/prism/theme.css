@@ -1,42 +1,40 @@
 /* ════════════════════════════════════════════════════════════════════
-   Prism — mimics Prism Launcher's dark UI as closely as the theme layer
-   allows. Achieved entirely in CSS: flat slate surfaces, a compact left
-   rail, a list of instances (not cards), and a green launch accent.
+   Prism — recreated Prism Launcher UI (theme.css part).
+   Works together with theme.js, which builds the toolbar, the right action
+   panel, grouped icon tiles and the two-layer status bar.
    ════════════════════════════════════════════════════════════════════ */
 
 :root {
   color-scheme: dark;
 
-  /* Prism Launcher-ish palette */
-  --pd-bg-0: #1d1d26;
-  --pd-bg-1: #21212b;
-  --pd-bg-2: #262632;
-  --pd-surface: rgba(38, 38, 52, 0.9);
-  --pd-surface-strong: rgba(42, 42, 58, 0.98);
+  --pd-bg-0: #1b1b21;
+  --pd-bg-1: #212127;
+  --pd-bg-2: #27272e;
+  --pd-surface: rgba(39, 39, 46, 0.92);
+  --pd-surface-strong: rgba(44, 44, 52, 0.98);
   --pd-surface-soft: rgba(255, 255, 255, 0.045);
-  --pd-overlay: rgba(12, 12, 18, 0.72);
 
-  --pd-line: rgba(255, 255, 255, 0.075);
-  --pd-line-strong: rgba(255, 255, 255, 0.14);
-  --pd-line-accent: rgba(76, 175, 80, 0.5);
+  --pd-line: rgba(255, 255, 255, 0.09);
+  --pd-line-strong: rgba(255, 255, 255, 0.16);
+  --pd-line-accent: rgba(76, 175, 80, 0.55);
 
   --pd-text: #ececee;
-  --pd-text-soft: #c6c6ce;
-  --pd-muted: #9393a0;
-  --pd-faint: #63636f;
+  --pd-text-soft: #c8c8d0;
+  --pd-muted: #92929e;
+  --pd-faint: #62626d;
 
-  --pd-accent: #4caf50;          /* green launch */
-  --pd-accent-2: #7289da;        /* blurple highlight */
+  --pd-accent: #4caf50;
+  --pd-accent-2: #57c95f;
   --pd-accent-3: #4db6ac;
   --pd-accent-soft: rgba(76, 175, 80, 0.14);
-  --pd-accent-2-soft: rgba(114, 137, 218, 0.16);
+  --pd-accent-2-soft: rgba(87, 201, 95, 0.16);
   --pd-success: #4caf50;
   --pd-warning: #e5a43c;
   --pd-danger: #d9534f;
 
-  --pd-radius-sm: 6px;
-  --pd-radius-md: 8px;
-  --pd-radius-lg: 10px;
+  --pd-radius-sm: 4px;
+  --pd-radius-md: 6px;
+  --pd-radius-lg: 8px;
   --pd-radius-pill: 999px;
 
   --pd-card-skew: 0deg;
@@ -48,12 +46,13 @@
   --pd-backdrop-blur: 0px;
   --pd-icon-filter: none;
 
-  --pd-sidebar-w: 208px;
+  --pd-sidebar-w: 232px;
+  --pd-topbar-h: 44px;
+  --pd-statusbar-h: 52px;
   --pd-gap: 0px;
   --pd-frame-pad: 0px;
 }
 
-/* flat background, no vignette / grid */
 body {
   background: var(--pd-bg-1);
 }
@@ -62,7 +61,16 @@ body {
   display: none;
 }
 
-/* ── Region chrome: flat panels, no rounded glass ─────────────── */
+/* ── Layout: content center, action sidebar on the RIGHT ───────── */
+
+#app {
+  grid-template-columns: minmax(0, 1fr) var(--pd-sidebar-w);
+  grid-template-rows: var(--pd-topbar-h) minmax(0, 1fr) var(--pd-statusbar-h);
+  grid-template-areas:
+    "topbar topbar"
+    "content sidebar"
+    "statusbar statusbar";
+}
 
 .topbar {
   border-radius: 0;
@@ -72,19 +80,21 @@ body {
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding: 0 var(--pd-space-4);
-  height: 52px;
+  height: 44px;
+  padding: 0 8px;
+  gap: 6px;
 }
 
 .sidebar {
   border-radius: 0;
   border: 0;
-  border-right: 1px solid var(--pd-line);
+  border-left: 1px solid var(--pd-line);
   background: var(--pd-bg-0);
   box-shadow: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding: var(--pd-space-3);
+  padding: 10px;
+  gap: 10px;
 }
 
 .statusbar {
@@ -92,199 +102,381 @@ body {
   border: 0;
   border-top: 1px solid var(--pd-line);
   background: var(--pd-bg-0);
+  height: auto;
+  padding: 0;
+  gap: 0;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* hide base chrome that Prism replaces */
+.brand,
+.topbar__meta,
+.deck-head,
+.deck-toolbar {
+  display: none;
+}
+
+/* ── Toolbar (built by theme.js) ───────────────────────────────── */
+
+.prism-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   height: 30px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--pd-text-soft);
+  font-size: 0.8rem;
+  cursor: pointer;
 }
 
-/* brand: keep it simple, Prism-like title */
-.brand__mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  font-size: 1rem;
-  background: linear-gradient(135deg, #7289da, #4caf50 65%, #4db6ac);
-  box-shadow: none;
+.prism-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--pd-line);
 }
 
-.brand__text strong {
-  font-size: 1rem;
+.prism-tool-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.prism-tool-btn--green {
+  background: linear-gradient(135deg, #57c95f, #43a047);
+  border-color: #3f9148;
+  color: #fff;
   font-weight: 600;
 }
 
-/* ── Sidebar rail ─────────────────────────────────────────────── */
+.prism-tool-btn--green:hover {
+  background: linear-gradient(135deg, #66d46e, #4caf50);
+}
 
-.nav__item {
-  border-radius: 6px;
-  padding: 9px 12px;
+.prism-tool-btn__arrow {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+.prism-cat {
+  flex: 0 0 auto;
+  font-size: 1rem;
+  opacity: 0.85;
+  cursor: default;
+  filter: grayscale(0.2);
+}
+
+.prism-tool-spacer {
+  flex: 1 1 auto;
+}
+
+/* ── Right action sidebar (built by theme.js) ──────────────────── */
+
+.prism-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  overflow: auto;
+}
+
+.prism-side__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 6px 10px;
+  border-bottom: 1px solid var(--pd-line);
+}
+
+.prism-side__logo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #7289da 0%, #4caf50 45%, #f0ad4e 70%, #d9534f 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.prism-side__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--pd-text);
+  overflow-wrap: anywhere;
+}
+
+.prism-side__sub {
+  font-size: 0.72rem;
+  color: var(--pd-muted);
+}
+
+.prism-side__btn {
+  display: flex;
+  align-items: center;
   gap: 10px;
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--pd-line);
+  border-radius: 4px;
+  background: var(--pd-surface-soft);
+  color: var(--pd-text-soft);
+  font-size: 0.8rem;
+  text-align: left;
+  cursor: pointer;
 }
 
-.nav__item::before {
-  width: 7px;
-  height: 7px;
-  background: var(--pd-muted);
-  box-shadow: none;
+.prism-side__btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--pd-line-strong);
 }
 
-.nav__item.is-active {
-  background: rgba(114, 137, 218, 0.18);
-  border-color: transparent;
+.prism-side__btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
-.nav__item.is-active::before {
-  background: var(--pd-accent);
-  box-shadow: none;
+.prism-side__btn .ico {
+  width: 18px;
+  text-align: center;
+  flex: 0 0 auto;
 }
 
-.group-item.is-active {
-  background: rgba(114, 137, 218, 0.14);
+.prism-side__btn--launch {
+  background: linear-gradient(135deg, #57c95f, #43a047);
+  border-color: #3f9148;
+  color: #fff;
+  font-weight: 600;
+  height: 38px;
 }
 
-/* ── Content: full-width, minimal chrome ──────────────────────── */
+.prism-side__btn--launch:hover {
+  background: linear-gradient(135deg, #66d46e, #4caf50);
+}
+
+.prism-side__btn--danger {
+  color: #f2a6ac;
+}
+
+.prism-side__label {
+  margin-top: 8px;
+  padding: 0 6px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pd-faint);
+}
+
+/* ── Grouped icon tile grid (built by theme.js onRender) ───────── */
 
 .content__inner {
   max-width: none;
   width: 100%;
-  gap: var(--pd-space-3);
-  padding: var(--pd-space-4) var(--pd-space-5);
+  gap: 0;
+  padding: 12px 16px;
 }
 
-.deck-head {
-  padding: 0;
+#instance-grid {
+  display: block;
+}
+
+.prism-group {
+  margin-bottom: 14px;
+}
+
+.prism-group__header {
+  display: flex;
   align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--pd-line);
+  margin-bottom: 8px;
 }
 
-.deck-head__copy h1 {
-  font-size: 1.35rem;
+.prism-group__toggle {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border: 1px solid var(--pd-line-strong);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--pd-text-soft);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.prism-group__title {
+  font-size: 0.78rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
-  background: none;
-  color: var(--pd-text);
-  -webkit-text-fill-color: var(--pd-text);
-  margin: 4px 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pd-text-soft);
 }
 
-.deck-head__copy .hero__copy {
-  font-family: var(--pd-font-mono);
-  font-size: var(--pd-text-xs);
-  color: var(--pd-muted);
+.prism-group__count {
+  font-size: 0.7rem;
+  color: var(--pd-faint);
 }
 
-.deck-stats {
+.prism-group__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+  gap: 6px;
+}
+
+.prism-group.is-collapsed .prism-group__grid {
   display: none;
 }
 
-/* ── Instance list (not cards) ────────────────────────────────── */
-
-.instance-grid {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-}
-
+/* tile cards */
 .instance-card {
-  --pd-card-lift: 0px;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 10px 12px;
-  border: 0;
-  border-bottom: 1px solid var(--pd-line);
-  border-radius: 0;
+  gap: 8px;
+  padding: 12px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
   background: transparent;
   box-shadow: none;
+  text-align: center;
   transform: none;
   animation: none;
 }
 
 .instance-card:hover {
-  --pd-card-lift: 0px;
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--pd-line);
   box-shadow: none;
 }
 
-.instance-card:active {
-  --pd-card-lift: 0px;
-}
-
-.instance-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  animation: none;
-  box-shadow: none;
+.instance-card.is-selected {
+  border-color: var(--pd-accent);
+  background: rgba(76, 175, 80, 0.14);
 }
 
 .instance-card__top {
-  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.instance-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  box-shadow: none;
+  animation: none;
+}
+
+.instance-card__heading {
+  text-align: center;
 }
 
 .instance-card__name {
-  font-size: 0.95rem;
+  font-size: 0.76rem;
   font-weight: 500;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
-.instance-card__sub {
-  display: block;
-  font-size: 10px;
+.instance-card__sub,
+.badge-row,
+.instance-card__footer {
+  display: none;
+}
+
+/* ── Status bar (built by theme.js) ────────────────────────────── */
+
+.statusbar__news {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-bottom: 1px solid var(--pd-line);
+  font-size: 0.74rem;
+  color: var(--pd-text-soft);
+}
+
+.statusbar__news .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--pd-success);
+  box-shadow: 0 0 8px var(--pd-success);
+}
+
+.statusbar__news a {
+  margin-left: auto;
+  color: var(--pd-accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.statusbar__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 12px;
+  font-size: 0.72rem;
   color: var(--pd-muted);
 }
 
-.badge-row {
-  display: none;
+.statusbar__row .spacer {
+  flex: 1 1 auto;
 }
 
-.instance-card__footer {
+.prism-grip {
+  width: 12px;
+  height: 12px;
   flex: 0 0 auto;
-  gap: 10px;
-  margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
-  color: var(--pd-faint);
+  background:
+    linear-gradient(135deg, transparent 40%, var(--pd-faint) 40%, var(--pd-faint) 45%, transparent 45%),
+    linear-gradient(135deg, transparent 0%, var(--pd-faint) 0%, var(--pd-faint) 0%);
+  opacity: 0.6;
 }
 
-.instance-card__group {
+/* hide leftover base statusbar text the theme replaces */
+#status-install,
+#theme-label {
   display: none;
 }
 
-/* ── Green launch button (Prism's play action) ────────────────── */
-
-.btn--primary {
-  border-color: #3f9148;
-  background: linear-gradient(135deg, #57c95f, #43a047);
-  color: #fff;
-}
-
-.btn--primary:hover:not(:disabled) {
-  border-color: #57c95f;
-  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.4);
-}
-
-/* ── Modals / details: flat Prism-like panels ─────────────────── */
-
-.modal__panel {
-  border-radius: var(--pd-radius-md);
-  background: var(--pd-surface-strong);
-}
-
-.detail-row,
-.settings-section {
-  border-radius: 6px;
-  background: var(--pd-surface-soft);
-}
-
-/* chips and badges */
-.chip {
+/* search box keeps working, restyled as Prism's filter */
+.search {
+  width: min(280px, 30vw);
+  height: 30px;
   border-radius: 4px;
+  border-color: var(--pd-line);
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.badge {
-  border-radius: 4px;
-}
-
-/* respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
   }
+}
+
+/* fill the action-panel logo with the cloned instance icon */
+.prism-side__logo {
+  position: relative;
+  overflow: hidden;
+}
+
+.prism-side__logo .instance-icon {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  border: 0;
+}
+
+/* the base warning banner doesn't fit the Prism look */
+.warnings {
+  display: none;
 }

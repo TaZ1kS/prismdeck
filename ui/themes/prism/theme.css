@@ -102,23 +102,27 @@ body {
   border: 0;
   border-top: 1px solid var(--pd-line);
   background: var(--pd-bg-0);
-  height: auto;
+  height: var(--pd-statusbar-h);
   padding: 0;
   gap: 0;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
+  overflow: hidden;
 }
 
-/* hide base chrome that Prism replaces */
-.brand,
-.topbar__meta,
+/* deck-view-only chrome replaced by the theme (dashboard internals) */
 .deck-head,
 .deck-toolbar {
   display: none;
 }
 
 /* ── Toolbar (built by theme.js) ───────────────────────────────── */
+
+.prism-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
 .prism-tool-btn {
   display: inline-flex;
@@ -440,10 +444,12 @@ body {
   opacity: 0.6;
 }
 
-/* hide leftover base statusbar text the theme replaces */
-#status-install,
-#theme-label {
-  display: none;
+/* the injected two-layer status wrapper (built by theme.js) */
+.prism-status {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 
 /* search box keeps working, restyled as Prism's filter */

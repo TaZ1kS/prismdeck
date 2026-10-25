@@ -1,6 +1,6 @@
-/* Prism theme extension — rebuilds the interface into Prism Launcher's
-   layout: a toolbar, a grouped icon grid, a right action sidebar and a
-   two-layer status bar. Purely frontend; the Rust binary is untouched. */
+/* Prism theme extension — rebuilds the *instances* view into Prism Launcher's
+   layout. Everything is reversible: injected chrome is removed on unmount and
+   hidden when the user navigates to Settings/Themes (base chrome returns). */
 
 window.PRISMDECK_THEME = {
   mount(ctx) {
@@ -10,20 +10,37 @@ window.PRISMDECK_THEME = {
       panelLogo: null,
       playtime: null,
       version: null,
+      setDeck: () => {},
     };
-
     ctx.__prism = S;
 
-    // ── 1. Toolbar ──────────────────────────────────────────────
-    buildToolbar(ctx);
+    const topbar = ctx.regions.topbar;
+    const sidebar = ctx.regions.sidebar;
+    const statusbar = ctx.regions.statusbar;
 
-    // ── 2. Right action sidebar ─────────────────────────────────
-    buildSide(ctx, S);
+    // base elements we hide in the deck view (kept in DOM, never destroyed)
+    const baseTopbarExtras = [
+      ctx.$(".brand", topbar),
+      ctx.$(".topbar__meta", topbar),
+      ctx.$(".topbar__spacer", topbar),
+    ].filter(Boolean);
+    const baseSide = [
+      ctx.$(".nav", sidebar),
+      ctx.$(".sidebar__groups", sidebar),
+      ctx.$(".source-card", sidebar),
+    ].filter(Boolean);
+    const baseStatusChildren = Array.from(statusbar.children);
 
-    // ── 3. Status bar ───────────────────────────────────────────
-    buildStatus(ctx, S);
+    // ── build chrome ────────────────────────────────────────────
+    const toolbar = buildToolbar(ctx);
+    const panel = buildSide(ctx, S);
+    const status = buildStatus(ctx, S);
 
-    // ── 4. Selection: click a tile to select (not open the modal) ──
+    topbar.append(toolbar.el);
+    sidebar.append(panel.el);
+    statusbar.append(status.el);
+
+    // ── selection ───────────────────────────────────────────────
     const onContentClick = (event) => {
       const card = event.target.closest(".instance-card");
       if (!card) return;
@@ -32,12 +49,38 @@ window.PRISMDECK_THEME = {
       selectCard(ctx, S, card);
     };
     ctx.regions.content.addEventListener("click", onContentClick, true);
-    ctx.onCleanup(() =>
-      ctx.regions.content.removeEventListener("click", onContentClick, true)
-    );
+
+    // ── view scoping: deck chrome only on the instances view ────
+    function setDeck(deck) {
+      for (const el of baseTopbarExtras) el.style.display = deck ? "none" : "";
+      for (const el of baseSide) el.style.display = deck ? "none" : "";
+      for (const el of baseStatusChildren) el.style.display = deck ? "none" : "";
+      toolbar.el.style.display = deck ? "" : "none";
+      panel.el.style.display = deck ? "" : "none";
+      status.el.style.display = deck ? "" : "none";
+    }
+    S.setDeck = setDeck;
+
+    // ── cleanup: remove chrome, restore base, drop the listener ──
+    ctx.onCleanup(() => {
+      ctx.regions.content.removeEventListener("click", onContentClick, true);
+      toolbar.el.remove();
+      panel.el.remove();
+      status.el.remove();
+      for (const el of baseTopbarExtras) el.style.display = "";
+      for (const el of baseSide) el.style.display = "";
+      for (const el of baseStatusChildren) el.style.display = "";
+    });
   },
 
   onRender(ctx) {
+    const S = ctx.__prism;
+    if (!S) return;
+
+    const deck = ctx.state.view === "instances";
+    S.setDeck(deck);
+
+    if (!deck) return;
     groupGrid(ctx);
     refreshSelected(ctx);
     refreshStatus(ctx);
@@ -55,9 +98,7 @@ function toolButton(ctx, label, options = {}) {
     title: options.title || "",
   });
   if (options.disabled) button.setAttribute("disabled", "");
-  if (options.icon) {
-    button.append(ctx.el("span", { text: options.icon }));
-  }
+  if (options.icon) button.append(ctx.el("span", { text: options.icon }));
   if (label) button.append(document.createTextNode(" " + label));
   if (options.arrow) {
     button.append(ctx.el("span", { className: "prism-tool-btn__arrow", text: " ▾" }));
@@ -67,9 +108,7 @@ function toolButton(ctx, label, options = {}) {
 }
 
 function buildToolbar(ctx) {
-  const topbar = ctx.regions.topbar;
-  const search = ctx.$(".search", topbar);
-  topbar.replaceChildren();
+  const container = ctx.el("div", { className: "prism-toolbar" });
 
   const add = toolButton(ctx, "Add Instance", {
     green: true,
@@ -83,7 +122,6 @@ function buildToolbar(ctx) {
     title: "Open system folders",
     disabled: true,
   });
-
   const cat = ctx.el("span", { className: "prism-cat", text: "🐱", title: "Meow" });
   const settings = toolButton(ctx, "Settings", {
     icon: "⚙️",
@@ -95,17 +133,8 @@ function buildToolbar(ctx) {
   const spacer1 = ctx.el("span", { className: "prism-tool-spacer" });
   const spacer2 = ctx.el("span", { className: "prism-tool-spacer" });
 
-  topbar.append(
-    search,
-    add,
-    folders,
-    spacer1,
-    cat,
-    spacer2,
-    settings,
-    help,
-    accounts
-  );
+  container.append(add, folders, spacer1, cat, spacer2, settings, help, accounts);
+  return { el: container };
 }
 
 function sideButton(ctx, icon, label, options = {}) {
@@ -130,17 +159,15 @@ function sideLabel(ctx, text) {
 }
 
 function buildSide(ctx, S) {
-  const sidebar = ctx.regions.sidebar;
-  ctx.$(".nav", sidebar)?.remove();
-  ctx.$(".sidebar__groups", sidebar)?.remove();
-  ctx.$(".source-card", sidebar)?.remove();
-
   const panel = ctx.el("div", { className: "prism-side" });
 
   const header = ctx.el("div", { className: "prism-side__header" });
   const logo = ctx.el("div", { className: "prism-side__logo" });
   const headText = ctx.el("div", {});
-  S.panelTitle = ctx.el("div", { className: "prism-side__title", text: "No instance selected" });
+  S.panelTitle = ctx.el("div", {
+    className: "prism-side__title",
+    text: "No instance selected",
+  });
   const sub = ctx.el("div", { className: "prism-side__sub", text: "Select an instance" });
   headText.append(S.panelTitle, sub);
   header.append(logo, headText);
@@ -180,30 +207,26 @@ function buildSide(ctx, S) {
     shortcut
   );
 
-  sidebar.append(panel);
+  return { el: panel };
 }
 
 function buildStatus(ctx, S) {
-  const statusbar = ctx.regions.statusbar;
+  const container = ctx.el("div", { className: "prism-status" });
 
-  // top layer: news
   const news = ctx.el("div", { className: "statusbar__news" });
   news.append(ctx.el("span", { className: "dot" }));
   news.append(ctx.el("span", { text: "Prism Launcher Release 6.1, now available" }));
-  const more = ctx.el("a", { text: "More news" });
-  news.append(more);
+  news.append(ctx.el("a", { text: "More news" }));
 
-  // bottom layer: version (left) + playtime (right) + resize grip
   const row = ctx.el("div", { className: "statusbar__row" });
-
   S.version = ctx.el("span", { text: "Minecraft —" });
   S.playtime = ctx.el("span", { text: "Total playtime: 0s" });
   const spacer = ctx.el("span", { className: "spacer" });
   const grip = ctx.el("span", { className: "prism-grip" });
-
   row.append(S.version, spacer, S.playtime, grip);
 
-  statusbar.replaceChildren(news, row);
+  container.append(news, row);
+  return { el: container };
 }
 
 function titleFor(slug) {

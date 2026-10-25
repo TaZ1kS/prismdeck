@@ -1,0 +1,290 @@
+/* ════════════════════════════════════════════════════════════════════
+   Prism — mimics Prism Launcher's dark UI as closely as the theme layer
+   allows. Achieved entirely in CSS: flat slate surfaces, a compact left
+   rail, a list of instances (not cards), and a green launch accent.
+   ════════════════════════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: dark;
+
+  /* Prism Launcher-ish palette */
+  --pd-bg-0: #1d1d26;
+  --pd-bg-1: #21212b;
+  --pd-bg-2: #262632;
+  --pd-surface: rgba(38, 38, 52, 0.9);
+  --pd-surface-strong: rgba(42, 42, 58, 0.98);
+  --pd-surface-soft: rgba(255, 255, 255, 0.045);
+  --pd-overlay: rgba(12, 12, 18, 0.72);
+
+  --pd-line: rgba(255, 255, 255, 0.075);
+  --pd-line-strong: rgba(255, 255, 255, 0.14);
+  --pd-line-accent: rgba(76, 175, 80, 0.5);
+
+  --pd-text: #ececee;
+  --pd-text-soft: #c6c6ce;
+  --pd-muted: #9393a0;
+  --pd-faint: #63636f;
+
+  --pd-accent: #4caf50;          /* green launch */
+  --pd-accent-2: #7289da;        /* blurple highlight */
+  --pd-accent-3: #4db6ac;
+  --pd-accent-soft: rgba(76, 175, 80, 0.14);
+  --pd-accent-2-soft: rgba(114, 137, 218, 0.16);
+  --pd-success: #4caf50;
+  --pd-warning: #e5a43c;
+  --pd-danger: #d9534f;
+
+  --pd-radius-sm: 6px;
+  --pd-radius-md: 8px;
+  --pd-radius-lg: 10px;
+  --pd-radius-pill: 999px;
+
+  --pd-card-skew: 0deg;
+  --pd-card-rotate: 0deg;
+  --pd-card-scale: 1;
+  --pd-topbar-skew: 0deg;
+  --pd-sidebar-skew: 0deg;
+
+  --pd-backdrop-blur: 0px;
+  --pd-icon-filter: none;
+
+  --pd-sidebar-w: 208px;
+  --pd-gap: 0px;
+  --pd-frame-pad: 0px;
+}
+
+/* flat background, no vignette / grid */
+body {
+  background: var(--pd-bg-1);
+}
+
+#app::before {
+  display: none;
+}
+
+/* ── Region chrome: flat panels, no rounded glass ─────────────── */
+
+.topbar {
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid var(--pd-line);
+  background: var(--pd-bg-0);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0 var(--pd-space-4);
+  height: 52px;
+}
+
+.sidebar {
+  border-radius: 0;
+  border: 0;
+  border-right: 1px solid var(--pd-line);
+  background: var(--pd-bg-0);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: var(--pd-space-3);
+}
+
+.statusbar {
+  border-radius: 0;
+  border: 0;
+  border-top: 1px solid var(--pd-line);
+  background: var(--pd-bg-0);
+  height: 30px;
+}
+
+/* brand: keep it simple, Prism-like title */
+.brand__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #7289da, #4caf50 65%, #4db6ac);
+  box-shadow: none;
+}
+
+.brand__text strong {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ── Sidebar rail ─────────────────────────────────────────────── */
+
+.nav__item {
+  border-radius: 6px;
+  padding: 9px 12px;
+  gap: 10px;
+}
+
+.nav__item::before {
+  width: 7px;
+  height: 7px;
+  background: var(--pd-muted);
+  box-shadow: none;
+}
+
+.nav__item.is-active {
+  background: rgba(114, 137, 218, 0.18);
+  border-color: transparent;
+}
+
+.nav__item.is-active::before {
+  background: var(--pd-accent);
+  box-shadow: none;
+}
+
+.group-item.is-active {
+  background: rgba(114, 137, 218, 0.14);
+}
+
+/* ── Content: full-width, minimal chrome ──────────────────────── */
+
+.content__inner {
+  max-width: none;
+  width: 100%;
+  gap: var(--pd-space-3);
+  padding: var(--pd-space-4) var(--pd-space-5);
+}
+
+.deck-head {
+  padding: 0;
+  align-items: center;
+}
+
+.deck-head__copy h1 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  background: none;
+  color: var(--pd-text);
+  -webkit-text-fill-color: var(--pd-text);
+  margin: 4px 0 2px;
+}
+
+.deck-head__copy .hero__copy {
+  font-family: var(--pd-font-mono);
+  font-size: var(--pd-text-xs);
+  color: var(--pd-muted);
+}
+
+.deck-stats {
+  display: none;
+}
+
+/* ── Instance list (not cards) ────────────────────────────────── */
+
+.instance-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.instance-card {
+  --pd-card-lift: 0px;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--pd-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+  animation: none;
+}
+
+.instance-card:hover {
+  --pd-card-lift: 0px;
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: none;
+}
+
+.instance-card:active {
+  --pd-card-lift: 0px;
+}
+
+.instance-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  animation: none;
+  box-shadow: none;
+}
+
+.instance-card__top {
+  flex: 1 1 auto;
+}
+
+.instance-card__name {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.instance-card__sub {
+  display: block;
+  font-size: 10px;
+  color: var(--pd-muted);
+}
+
+.badge-row {
+  display: none;
+}
+
+.instance-card__footer {
+  flex: 0 0 auto;
+  gap: 10px;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+  color: var(--pd-faint);
+}
+
+.instance-card__group {
+  display: none;
+}
+
+/* ── Green launch button (Prism's play action) ────────────────── */
+
+.btn--primary {
+  border-color: #3f9148;
+  background: linear-gradient(135deg, #57c95f, #43a047);
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  border-color: #57c95f;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* ── Modals / details: flat Prism-like panels ─────────────────── */
+
+.modal__panel {
+  border-radius: var(--pd-radius-md);
+  background: var(--pd-surface-strong);
+}
+
+.detail-row,
+.settings-section {
+  border-radius: 6px;
+  background: var(--pd-surface-soft);
+}
+
+/* chips and badges */
+.chip {
+  border-radius: 4px;
+}
+
+.badge {
+  border-radius: 4px;
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+  }
+}

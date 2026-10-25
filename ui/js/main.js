@@ -969,6 +969,7 @@ const FALLBACK_THEMES = [
   { id: "paper", name: "Paper", accent: "#c2672c", scheme: "light", description: "Light, centered, soft dividers" },
   { id: "split", name: "Split", accent: "#ffd23f", scheme: "dark", description: "Dock bottom, sidebar right, wide rows" },
   { id: "showcase", name: "Showcase", accent: "#ff3d81", scheme: "dark", description: "Exercises every customization feature" },
+  { id: "prism", name: "Prism", accent: "#4caf50", scheme: "dark", description: "Mimics Prism Launcher's dark UI" },
 ];
 
 async function loadThemes() {

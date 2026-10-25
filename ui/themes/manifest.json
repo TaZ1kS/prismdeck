@@ -52,5 +52,14 @@
     "author": "PrismDeck",
     "description": "Exercises every customization feature",
     "tags": ["lab", "hooks", "fonts"]
+  },
+  {
+    "id": "prism",
+    "name": "Prism",
+    "accent": "#4caf50",
+    "scheme": "dark",
+    "author": "PrismDeck",
+    "description": "Mimics Prism Launcher's dark UI",
+    "tags": ["prism", "list", "dark"]
   }
 ]

@@ -962,13 +962,23 @@ async function applyTheme(id) {
   renderThemes();
 }
 
+const FALLBACK_THEMES = [
+  { id: "default", name: "Default", accent: "#ff7a45", scheme: "dark", description: "Card grid with a left sidebar" },
+  { id: "arcade", name: "Arcade", accent: "#22d3ee", scheme: "dark", description: "Neon tiles, tilted, no bottom bar" },
+  { id: "terminal", name: "Terminal", accent: "#4ade80", scheme: "dark", description: "Monospaced list, nav on top" },
+  { id: "paper", name: "Paper", accent: "#c2672c", scheme: "light", description: "Light, centered, soft dividers" },
+  { id: "split", name: "Split", accent: "#ffd23f", scheme: "dark", description: "Dock bottom, sidebar right, wide rows" },
+  { id: "showcase", name: "Showcase", accent: "#ff3d81", scheme: "dark", description: "Exercises every customization feature" },
+];
+
 async function loadThemes() {
   try {
     const response = await fetch("themes/manifest.json");
-    const manifest = await response.json();
-    state.themes = Array.isArray(manifest) ? manifest : [];
+    const text = await response.text();
+    const manifest = JSON.parse(text);
+    state.themes = Array.isArray(manifest) ? manifest : FALLBACK_THEMES;
   } catch {
-    state.themes = [];
+    state.themes = FALLBACK_THEMES;
   }
 
   const stored = state.settings?.theme || localStorage.getItem("prismdeck.theme");

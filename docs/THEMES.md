@@ -6,6 +6,44 @@ applied last, it can rewrite *everything*: colors, typography, card layout,
 and the entire grid of regions. Each demo theme looks like a different program
 on purpose.
 
+## DOM extensions (structure, not just style)
+
+A theme may also ship an optional **`theme.js`** — a plain script that can
+change the *structure* of the interface: add a menu or button, remove or
+reorder an element, inject arbitrary HTML. It assigns a global hook:
+
+```js
+window.PRISMDECK_THEME = {
+  mount(ctx) {
+    // remove the Settings nav button
+    ctx.$(".nav__item[data-nav='settings']")?.remove();
+
+    // add a custom button from an HTML string
+    const button = ctx
+      .html('<button class="btn btn--ghost btn--small">⚡ Demo</button>')
+      .querySelector("button");
+    button.addEventListener("click", () => ctx.actions.setView("themes"));
+    ctx.regions.topbar?.append(button);
+    ctx.onCleanup(() => button.remove());
+  },
+};
+```
+
+The context (`ctx`) exposes:
+
+- `ctx.root` — the `#app` element
+- `ctx.regions` — `{ topbar, sidebar, content, statusbar }`
+- `ctx.$(selector, parent?)` / `ctx.$$(selector, parent?)` — query helpers
+- `ctx.el(tag, props, ...children)` — element factory
+- `ctx.html(htmlString)` — parse an HTML string into a fragment
+- `ctx.actions` — `setView`, `openInstance`, `launchInstance`, `refresh`,
+  `clearFilters`, `applyTheme`, `stopRun`
+- `ctx.onCleanup(fn)` — register teardown run on switch
+
+`mount` runs once when the theme is applied. Prefer injecting into the stable
+regions (topbar/sidebar/statusbar/content shell); the instance grid is
+re-rendered by the app, so theme it with CSS + `data-*` hooks instead.
+
 ## How themes are loaded
 
 - `ui/themes/manifest.json` lists the available themes (id, name, accent,

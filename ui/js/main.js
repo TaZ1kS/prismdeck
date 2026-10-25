@@ -105,6 +105,7 @@ const state = {
   themes: [],
   activeTheme: null,
   settings: null,
+  themeExtension: null,
 };
 
 // ── IPC helpers ────────────────────────────────────────────────
@@ -890,6 +891,122 @@ function setThemeLink(id) {
   link.href = `themes/${id}/theme.css?t=${Date.now()}`;
 }
 
+/* ── Theme DOM extensions ────────────────────────────────────────
+   A theme may ship an optional `theme.js` (a plain script) that assigns
+   `window.PRISMDECK_THEME = { mount(ctx), unmount(ctx) }`. mount runs once
+   on apply and may inject/remove/reorder DOM in the stable regions (topbar,
+   sidebar, content shell, statusbar); `ctx.onCleanup` registers teardown
+   that runs on switch. Dynamic lists (instance grid) are still best styled
+   via CSS + data-* hooks, because they are re-rendered by the app. */
+
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(props || {})) {
+    if (key === "className") node.className = value;
+    else if (key === "text") node.textContent = value;
+    else if (key === "html") node.innerHTML = value;
+    else if (key === "style" && value && typeof value === "object")
+      Object.assign(node.style, value);
+    else if (key.startsWith("on") && typeof value === "function")
+      node.addEventListener(key.slice(2).toLowerCase(), value);
+    else if (value !== false && value != null)
+      node.setAttribute(key, value === true ? "" : value);
+  }
+  for (const child of children.flat()) {
+    if (child == null) continue;
+    node.append(child.nodeType ? child : document.createTextNode(String(child)));
+  }
+  return node;
+}
+
+function makeThemeContext() {
+  const cleanups = [];
+  return {
+    root: ui.app,
+    regions: {
+      topbar: document.querySelector('[data-region="topbar"]'),
+      sidebar: document.querySelector('[data-region="sidebar"]'),
+      content: document.querySelector('[data-region="content"]'),
+      statusbar: document.querySelector('[data-region="statusbar"]'),
+    },
+    $: (selector, parent = document) => parent.querySelector(selector),
+    $$: (selector, parent = document) => Array.from(parent.querySelectorAll(selector)),
+    el,
+    html: (htmlString) => {
+      const template = document.createElement("template");
+      template.innerHTML = htmlString.trim();
+      return template.content;
+    },
+    actions: {
+      setView: (view) => {
+        state.view = view;
+        render();
+      },
+      openInstance: (instanceId) => openInstance(instanceId),
+      launchInstance: (instanceId) => {
+        const instance = state.snapshot?.instances.find((item) => item.id === instanceId);
+        if (instance) launchInstance(instance);
+      },
+      refresh: () => handleRefresh(),
+      clearFilters: () => clearFilters(),
+      applyTheme: (id) => applyTheme(id),
+      stopRun: () => stopRun(),
+    },
+    onCleanup: (fn) => {
+      if (typeof fn === "function") cleanups.push(fn);
+    },
+    _cleanups: cleanups,
+  };
+}
+
+function runThemeCleanup() {
+  const extension = state.themeExtension;
+  if (!extension) return;
+  try {
+    extension.hook?.unmount?.(extension.ctx);
+  } catch {
+    /* ignore teardown errors */
+  }
+  for (const fn of extension.ctx._cleanups) {
+    try {
+      fn();
+    } catch {
+      /* ignore teardown errors */
+    }
+  }
+  extension.scriptEl?.remove();
+  delete window.PRISMDECK_THEME;
+  state.themeExtension = null;
+}
+
+function loadThemeExtension(id) {
+  return new Promise((resolve) => {
+    runThemeCleanup();
+    if (id === "default") {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `themes/${id}/theme.js?t=${Date.now()}`;
+    script.onload = () => {
+      const hook = window.PRISMDECK_THEME;
+      if (hook && typeof hook.mount === "function") {
+        const ctx = makeThemeContext();
+        state.themeExtension = { hook, ctx, scriptEl: script };
+        try {
+          hook.mount(ctx);
+        } catch (error) {
+          console.error(`theme "${id}" mount failed`, error);
+        }
+      }
+      resolve();
+    };
+    script.onerror = () => resolve();
+    document.head.append(script);
+  });
+}
+
 function renderThemes() {
   ui.themeList.replaceChildren();
 
@@ -952,6 +1069,7 @@ function renderThemes() {
 async function applyTheme(id) {
   state.activeTheme = id;
   setThemeLink(id);
+  await loadThemeExtension(id);
   localStorage.setItem("prismdeck.theme", id);
   ui.themeLabel.textContent = `theme: ${id}`;
   ui.settingsThemeLabel.textContent = id;
@@ -1033,6 +1151,7 @@ function registerThemeEvents() {
     const id = event.payload?.id;
     if (!id || !state.activeTheme || id !== state.activeTheme) return;
     setThemeLink(id);
+    loadThemeExtension(id);
   });
 }
 
